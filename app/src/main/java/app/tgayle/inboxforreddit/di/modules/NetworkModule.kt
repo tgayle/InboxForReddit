@@ -1,6 +1,7 @@
 package app.tgayle.inboxforreddit.di.modules
 
 import app.tgayle.inboxforreddit.di.InboxApplicationScope
+import app.tgayle.inboxforreddit.network.RedditApiService
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -24,5 +25,9 @@ class NetworkModule {
     @Provides
     @InboxApplicationScope
     fun okHttpClient(): OkHttpClient = OkHttpClient.Builder().build()
+
+    @Provides
+    @InboxApplicationScope
+    fun redditApiService(retrofit: Retrofit) = retrofit.create(RedditApiService::class.java)
 
 }
