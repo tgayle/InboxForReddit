@@ -1,7 +1,8 @@
-package app.tgayle.inboxforreddit
+package app.tgayle.inboxforreddit.screens
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import app.tgayle.inboxforreddit.R
 
 class MainActivity : AppCompatActivity() {
 
