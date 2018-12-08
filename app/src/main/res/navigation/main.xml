@@ -13,6 +13,6 @@
     </fragment>
     <fragment android:id="@+id/homeFragment" android:name="app.tgayle.inboxforreddit.screens.homescreen.HomeFragment"
               android:label="fragment_home" tools:layout="@layout/fragment_home"/>
-    <fragment android:id="@+id/loginFragment" android:name="app.tgayle.inboxforreddit.loginFragment"
+    <fragment android:id="@+id/loginFragment" android:name="app.tgayle.inboxforreddit.screens.loginscreen.loginFragment"
               android:label="fragment_login" tools:layout="@layout/fragment_login"/>
 </navigation>

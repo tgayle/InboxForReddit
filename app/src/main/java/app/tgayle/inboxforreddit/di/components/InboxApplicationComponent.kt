@@ -9,13 +9,15 @@ import app.tgayle.inboxforreddit.di.modules.NetworkModule
 import app.tgayle.inboxforreddit.network.RedditApiService
 import dagger.Component
 import dagger.android.AndroidInjectionModule
+import net.dean.jraw.oauth.AccountHelper
 import retrofit2.Retrofit
 
 @Component(modules = [NetworkModule::class, DatabaseModule::class, AndroidInjectionModule::class, ActivityInjector::class])
 @InboxApplicationScope
 interface InboxApplicationComponent {
     fun retrofit(): Retrofit
-    fun redditApiService(): RedditApiService
     fun database(): AppDatabase
+    fun redditApiService(): RedditApiService
+    fun redditHelper(): AccountHelper
     fun inject(application: InboxApplication)
 }

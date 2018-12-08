@@ -12,6 +12,6 @@ class DatabaseModule {
     @InboxApplicationScope
     @Provides
     fun room(context: Context): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, "inbox_database").build()
+        return Room.databaseBuilder(context, AppDatabase::class.java, "inbox_database").fallbackToDestructiveMigration().build()
     }
 }
