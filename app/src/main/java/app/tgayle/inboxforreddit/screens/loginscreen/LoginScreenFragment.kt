@@ -43,8 +43,8 @@ class LoginScreenFragment : Fragment(), LoginScreenModel.Listener {
         return view
     }
 
-    fun listenForNavigation() {
-        viewModel.navigationDecision.observe(this, Observer {
+    private fun listenForNavigation() {
+        viewModel.getNavigationDecision().observe(this, Observer {
             when (it) {
                 null -> Log.d("Login", "Nav decision currently null.")
                 LoginFragmentViewModel.LoginFragmentNavigation.HOME -> findNavController().navigate(R.id.homeFragment)
@@ -66,9 +66,9 @@ class LoginScreenFragment : Fragment(), LoginScreenModel.Listener {
     }
 
     override fun observeActionDispatch() {
-        viewModel.actionDispatch.observe(this, Observer {actions ->
+        viewModel.getActionDispatch().observe(this, Observer {actions ->
             when (actions) {
-                ALERT_MAIN_VM_WITH_REDDIT -> activityViewModel.onRedditClientUpdated(viewModel.redditClient.value!!)
+                ALERT_MAIN_VM_WITH_REDDIT -> activityViewModel.onRedditClientUpdated(viewModel.getRedditClient().value!!)
             }
         })
     }

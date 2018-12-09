@@ -1,6 +1,7 @@
 package app.tgayle.inboxforreddit.screens.loginscreen
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.tgayle.inboxforreddit.AppSingleton
@@ -12,18 +13,17 @@ class LoginFragmentViewModel(val dataRepository: DataRepository): ViewModel(), L
     private val jrawAuthHelper = AppSingleton.redditHelper.switchToNewUser()
     val scopes = arrayOf("modmail", "modlog", "read", "privatemessages", "report", "identity")
     val loginUrl = jrawAuthHelper.getAuthorizationUrl(true, true, *scopes)
-    val actionDispatch = MutableLiveData<FragmentActions>()
-    val navigationDecision = MutableLiveData<LoginFragmentNavigation>()
-    val redditClient =  MutableLiveData<RedditClient?>()
+    private val actionDispatchMutable = MutableLiveData<FragmentActions>()
+    private val navigationDecisionMutable = MutableLiveData<LoginFragmentNavigation>()
+    private val redditClientMutable =  MutableLiveData<RedditClient?>()
 
     override fun onLoginOccurred(link: String) {
-
         if (jrawAuthHelper.isFinalRedirectUrl(link)) {
-            navigationDecision.value = LoginFragmentNavigation.LOADING
+            navigationDecisionMutable.value = LoginFragmentNavigation.LOADING
             GlobalScope.launch(Dispatchers.Main) {
-                redditClient.value = attemptLogin(link).await()
-                actionDispatch.value = FragmentActions.ALERT_MAIN_VM_WITH_REDDIT
-                navigationDecision.value = LoginFragmentNavigation.HOME
+                redditClientMutable.value = attemptLogin(link).await()
+                actionDispatchMutable.value = FragmentActions.ALERT_MAIN_VM_WITH_REDDIT
+                navigationDecisionMutable.value = LoginFragmentNavigation.HOME
             }
         }
 
@@ -37,6 +37,10 @@ class LoginFragmentViewModel(val dataRepository: DataRepository): ViewModel(), L
                 redditClient
             }
     }
+
+    fun getActionDispatch(): LiveData<FragmentActions> = actionDispatchMutable
+    fun getNavigationDecision(): LiveData<LoginFragmentNavigation> = navigationDecisionMutable
+    fun getRedditClient(): LiveData<RedditClient?> = redditClientMutable
 
     enum class LoginFragmentNavigation {
         HOME,
