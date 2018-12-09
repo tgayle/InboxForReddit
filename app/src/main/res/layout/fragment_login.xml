@@ -3,12 +3,18 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".screens.loginscreen.LoginFragment">
+             tools:context=".screens.loginscreen.LoginScreenFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Login Fragment"/>
+            android:text="Login Fragment"
+    android:id="@+id/loginFragmentText"/>
+
+    <WebView android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/loginWebview">
+
+    </WebView>
 
 </FrameLayout>

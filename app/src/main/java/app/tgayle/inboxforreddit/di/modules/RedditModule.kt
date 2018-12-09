@@ -8,6 +8,9 @@ import dagger.Module
 import dagger.Provides
 import net.dean.jraw.android.AndroidHelper
 import net.dean.jraw.android.ManifestAppInfoProvider
+import net.dean.jraw.http.OkHttpNetworkAdapter
+import net.dean.jraw.http.UserAgent
+import okhttp3.OkHttpClient
 import java.util.*
 
 
@@ -28,4 +31,8 @@ class RedditModule {
     @Provides
     @InboxApplicationScope
     fun uuid() = UUID.randomUUID()
+
+    @Provides
+    @InboxApplicationScope
+    fun okHttpNetworkAdapter(userAgent: UserAgent, okHttpClient: OkHttpClient) = OkHttpNetworkAdapter(userAgent, okHttpClient)
 }

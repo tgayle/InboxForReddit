@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools" package="app.tgayle.inboxforreddit">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
             android:name=".InboxApplication"
             android:allowBackup="true"
@@ -10,23 +11,32 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme" tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".screens.MainActivity">
+        <activity android:name=".screens.mainactivity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                        android:scheme="http"
+                        android:host="inboxforreddit"
+                        android:pathPattern="/callback"/>
+            </intent-filter>
         </activity>
 
         <meta-data
                 android:name="net.dean.jraw.android.REDDIT_USERNAME"
-                android:value="/u/EnderShrooms" />
+                android:value="/u/EnderShrooms"/>
         <meta-data
                 android:name="net.dean.jraw.android.CLIENT_ID"
-                android:value="IofnW6Q5cc4ybg" />
+                android:value="9AWi0hGIbZxE5w"/>
         <meta-data
                 android:name="net.dean.jraw.android.REDIRECT_URL"
-                android:value="http://www.google.com" />
+                android:value="http://inboxforreddit/callback"/>
     </application>
 
 </manifest>
