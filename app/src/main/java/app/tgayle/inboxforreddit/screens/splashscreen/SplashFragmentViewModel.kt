@@ -23,9 +23,4 @@ class SplashFragmentViewModel(val dataRepository: DataRepository): ViewModel(), 
     }
 
     override fun getAllUsers() = dataRepository.getUsers()
-
-    enum class SplashFragmentNavigation {
-        LOGIN,
-        HOME
-    }
 }
