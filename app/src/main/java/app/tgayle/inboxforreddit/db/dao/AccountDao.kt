@@ -14,5 +14,5 @@ interface AccountDao {
     fun updateUserAuthData(username: String, refreshToken: String?)
 
     @Query("SELECT * FROM RedditAccount")
-    fun getAllUsers(): LiveData<List<RedditAccount>>
+    fun getAllUsers(): LiveData<List<RedditAccount>?>
 }

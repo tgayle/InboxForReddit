@@ -84,9 +84,9 @@ dependencies {
     implementation "androidx.paging:paging-rxjava2-ktx:$paging_version" // use -ktx for Kotlin
 
     // Navigation
-    implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha07" // use -ktx for Kotlin
+    implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha08" // use -ktx for Kotlin
     implementation "android.arch.navigation:navigation-ui-ktx:1.0.0-alpha07" // use -ktx for Kotlin
-    androidTestImplementation "android.arch.navigation:navigation-testing:1.0.0-alpha07"
+    androidTestImplementation "android.arch.navigation:navigation-testing:1.0.0-alpha08"
 
     // optional - ReactiveStreams support for LiveData
     implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version" // use -ktx for Kotlin

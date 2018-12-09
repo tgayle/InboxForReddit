@@ -1,10 +1,31 @@
 package app.tgayle.inboxforreddit.screens.splashscreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.db.repository.DataRepository
-import net.dean.jraw.oauth.AccountHelper
-import javax.inject.Inject
+import app.tgayle.inboxforreddit.model.RedditAccount
+import app.tgayle.inboxforreddit.util.SingleLiveEvent
 
-class SplashFragmentViewModel @Inject constructor(val dataRepository: DataRepository, val redditAccountHelper: AccountHelper): ViewModel() {
-    fun getAllUsers() = dataRepository.getUsers()
+class SplashFragmentViewModel(val dataRepository: DataRepository): ViewModel(), SplashScreenModel {
+    override val navigationDecision = SingleLiveEvent<Int?>()
+
+    override fun onUsersUpdate(users: List<RedditAccount>?) {
+        if (users == null) return
+
+        navigationDecision.value = if (users.isEmpty()) {
+            Log.d("Splash", "Navigating to Login")
+            R.id.action_splashFragment_to_loginFragment
+        } else {
+            Log.d("Splash", "Navigating to Home")
+            R.id.action_splashFragment_to_homeFragment
+        }
+    }
+
+    override fun getAllUsers() = dataRepository.getUsers()
+
+    enum class SplashFragmentNavigation {
+        LOGIN,
+        HOME
+    }
 }
