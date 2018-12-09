@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+    android:title="Inbox"
+    android:icon="@drawable/inbox_black_24"
+    android:id="@+id/home_navbar_inbox">
+    </item>
+    <item
+        android:title="Unread"
+        android:icon="@drawable/mailbox"
+        android:id="@+id/home_navbar_unread">
+
+    </item>
+    <item
+        android:title="Sent"
+        android:icon="@drawable/inbox_sent_black_24"
+        android:id="@+id/home_navbar_sent">
+    </item>
+</menu>
