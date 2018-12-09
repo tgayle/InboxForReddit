@@ -11,17 +11,21 @@ import net.dean.jraw.RedditClient
 
 class LoginFragmentViewModel(val dataRepository: DataRepository): ViewModel(), LoginScreenModel {
     private val jrawAuthHelper = AppSingleton.redditHelper.switchToNewUser()
-    val scopes = arrayOf("modmail", "modlog", "read", "privatemessages", "report", "identity")
+    private val scopes = arrayOf("modmail", "modlog", "read", "privatemessages", "report", "identity")
     val loginUrl = jrawAuthHelper.getAuthorizationUrl(true, true, *scopes)
     private val actionDispatchMutable = MutableLiveData<FragmentActions>()
     private val navigationDecisionMutable = MutableLiveData<LoginFragmentNavigation>()
-    private val redditClientMutable =  MutableLiveData<RedditClient?>()
+    private val redditClientMutable =  MutableLiveData<RedditClient>()
 
     override fun onLoginOccurred(link: String) {
         if (jrawAuthHelper.isFinalRedirectUrl(link)) {
             navigationDecisionMutable.value = LoginFragmentNavigation.LOADING
             GlobalScope.launch(Dispatchers.Main) {
-                redditClientMutable.value = attemptLogin(link).await()
+                val redditClient = attemptLogin(link).await()
+                redditClientMutable.value = redditClient
+
+                dataRepository.saveUser(redditClient).await()
+
                 actionDispatchMutable.value = FragmentActions.ALERT_MAIN_VM_WITH_REDDIT
                 navigationDecisionMutable.value = LoginFragmentNavigation.HOME
             }
@@ -33,6 +37,7 @@ class LoginFragmentViewModel(val dataRepository: DataRepository): ViewModel(), L
             return GlobalScope.async {
                 Log.d("Login", "Attempting Login")
                 val redditClient = jrawAuthHelper.onUserChallenge(link)
+                redditClient.authManager.refreshToken
                 Log.d("Login", "Login Success!: ${redditClient.me().username}")
                 redditClient
             }

@@ -15,7 +15,7 @@ class DatabaseModule {
     @InboxApplicationScope
     @Provides
     fun room(context: Context): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, "inbox_database")
+        return Room.databaseBuilder(context, AppDatabase::class.java, "inbox_database.db")
             .fallbackToDestructiveMigration()
             .allowMainThreadQueries() // Allow main thread to populate JRAW token store
             .build()

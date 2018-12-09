@@ -10,6 +10,7 @@ interface SplashScreenModel {
     interface Listener {
         fun listenForNavigation()
         fun listenForUsers()
+        fun listenForActionDispatch()
     }
 
     fun getAllUsers(): LiveData<List<RedditAccount>?>

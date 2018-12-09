@@ -2,6 +2,8 @@ package app.tgayle.inboxforreddit.db.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import app.tgayle.inboxforreddit.model.RedditAccount
 
@@ -15,4 +17,7 @@ interface AccountDao {
 
     @Query("SELECT * FROM RedditAccount")
     fun getAllUsers(): LiveData<List<RedditAccount>?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun saveUser(redditAccount: RedditAccount): Long
 }
