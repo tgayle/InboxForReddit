@@ -1,6 +1,7 @@
 package app.tgayle.inboxforreddit.screens.mainactivity
 
 import android.content.Intent
+import app.tgayle.inboxforreddit.model.RedditAccount
 import net.dean.jraw.RedditClient
 
 interface MainActivityModel {
@@ -8,5 +9,5 @@ interface MainActivityModel {
     }
 
     fun onIntentOccurred(intent: Intent)
-    fun onRedditClientUpdated(client: RedditClient)
+    fun onRedditClientUpdated(client: Pair<RedditClient, RedditAccount>)
 }

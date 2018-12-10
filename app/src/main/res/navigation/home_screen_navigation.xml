@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/home_screen_navigation"
+            app:startDestination="@id/inboxFragment">
+
+    <fragment android:id="@+id/inboxFragment" android:name="app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.InboxFragment"
+              android:label="inbox_fragment" tools:layout="@layout/inbox_fragment"/>
+</navigation>

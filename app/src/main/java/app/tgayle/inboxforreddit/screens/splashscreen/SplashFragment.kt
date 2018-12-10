@@ -15,7 +15,6 @@ import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import app.tgayle.inboxforreddit.screens.splashscreen.SplashFragmentViewModel.SplashScreenAction.UPDATE_ACTIVITY_VM_WITH_REDDIT
-import net.dean.jraw.RedditClient
 
 class SplashFragment : Fragment(), SplashScreenModel.Listener {
     lateinit var vmFactory: SplashFragmentViewModelFactory
@@ -60,8 +59,8 @@ class SplashFragment : Fragment(), SplashScreenModel.Listener {
         viewModel.getViewmodelDispatch().observe(this, Observer {
             when (it) {
                 UPDATE_ACTIVITY_VM_WITH_REDDIT -> {
-                    viewModel.getLocatedRedditAccount().observe(this, Observer { client: RedditClient? ->
-                        if (client != null) activityVm.onRedditClientUpdated(client);
+                    viewModel.getLocatedRedditAccount().observe(this, Observer { clientAndAccount ->
+                        if (clientAndAccount != null) activityVm.onRedditClientUpdated(clientAndAccount);
                     })
                 }
                 null -> TODO()

@@ -2,20 +2,24 @@ package app.tgayle.inboxforreddit.screens.mainactivity
 
 import android.content.Intent
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.tgayle.inboxforreddit.db.repository.DataRepository
+import app.tgayle.inboxforreddit.model.RedditAccount
 import net.dean.jraw.RedditClient
 
 class MainActivityViewModel(dataRepository: DataRepository): ViewModel(), MainActivityModel {
-    val redditClient = MutableLiveData<RedditClient>()
+    private val redditClient = MutableLiveData<Pair<RedditClient, RedditAccount>>()
 
     override fun onIntentOccurred(intent: Intent) {
     }
 
-    override fun onRedditClientUpdated(client: RedditClient) {
+    override fun onRedditClientUpdated(client: Pair<RedditClient, RedditAccount>) {
         Log.d("MainActivityVM", "Client set to $client")
         redditClient.value = client
     }
+
+    fun getRedditClient(): LiveData<Pair<RedditClient, RedditAccount>> = redditClient
 
 }

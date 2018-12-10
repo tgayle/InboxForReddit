@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.db.repository.DataRepository
+import app.tgayle.inboxforreddit.model.RedditAccount
 import kotlinx.coroutines.*
 import net.dean.jraw.RedditClient
 
@@ -15,16 +16,16 @@ class LoginFragmentViewModel(val dataRepository: DataRepository): ViewModel(), L
     val loginUrl = jrawAuthHelper.getAuthorizationUrl(true, true, *scopes)
     private val actionDispatchMutable = MutableLiveData<FragmentActions>()
     private val navigationDecisionMutable = MutableLiveData<LoginFragmentNavigation>()
-    private val redditClientMutable =  MutableLiveData<RedditClient>()
+    private val redditClientMutable =  MutableLiveData<Pair<RedditClient, RedditAccount>?>()
 
     override fun onLoginOccurred(link: String) {
         if (jrawAuthHelper.isFinalRedirectUrl(link)) {
             navigationDecisionMutable.value = LoginFragmentNavigation.LOADING
             GlobalScope.launch(Dispatchers.Main) {
                 val redditClient = attemptLogin(link).await()
-                redditClientMutable.value = redditClient
+                val redditAccount = dataRepository.saveUser(redditClient).await()
+                redditClientMutable.value = Pair(redditClient, redditAccount)
 
-                dataRepository.saveUser(redditClient).await()
 
                 actionDispatchMutable.value = FragmentActions.ALERT_MAIN_VM_WITH_REDDIT
                 navigationDecisionMutable.value = LoginFragmentNavigation.HOME
@@ -45,7 +46,7 @@ class LoginFragmentViewModel(val dataRepository: DataRepository): ViewModel(), L
 
     fun getActionDispatch(): LiveData<FragmentActions> = actionDispatchMutable
     fun getNavigationDecision(): LiveData<LoginFragmentNavigation> = navigationDecisionMutable
-    fun getRedditClient(): LiveData<RedditClient?> = redditClientMutable
+    fun getRedditClient(): LiveData<Pair<RedditClient, RedditAccount>?> = redditClientMutable
 
     enum class LoginFragmentNavigation {
         HOME,

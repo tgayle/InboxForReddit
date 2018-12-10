@@ -10,7 +10,7 @@ class RoomTokenStore(val appDatabase: AppDatabase): DeferredPersistentTokenStore
     }
 
     override fun doLoad(): Map<String, PersistedAuthData> {
-        val accounts = appDatabase.dao().getAllSync()
+        val accounts = appDatabase.accounts().getAllSync()
         val loadedData = HashMap<String, PersistedAuthData>()
         accounts.forEach {
             loadedData[it.name] = PersistedAuthData.create(null, it.refreshToken)
@@ -20,7 +20,7 @@ class RoomTokenStore(val appDatabase: AppDatabase): DeferredPersistentTokenStore
 
     override fun doPersist(data: Map<String, PersistedAuthData>) {
         for ((username, authData) in data) {
-            appDatabase.dao().updateUserAuthData(username, authData.refreshToken)
+            appDatabase.accounts().updateUserAuthData(username, authData.refreshToken)
         }
     }
 
