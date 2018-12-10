@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="8dp"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:cardCornerRadius="5dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <TextView
+                    android:id="@+id/message_rv_item_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Author x Correspondent"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline" android:layout_marginEnd="8dp"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/message_rv_item_date"
+                    android:text="Some Random Date"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/message_rv_item_author"
+                    app:layout_constraintStart_toStartOf="@+id/guideline" android:layout_marginStart="8dp"/>
+
+            <TextView
+                    android:id="@+id/message_rv_item_message"
+                    app:layout_constraintTop_toBottomOf="@id/message_rv_item_author"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="6dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:text="Message Text"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="6dp"/>
+            <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content"
+                                                        android:layout_height="wrap_content" android:id="@+id/guideline"
+                                                        app:layout_constraintGuide_begin="220dp"
+                                                        android:orientation="vertical"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

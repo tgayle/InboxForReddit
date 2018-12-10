@@ -1,12 +1,15 @@
 package app.tgayle.inboxforreddit.screens.homescreen.inboxscreen
 
 import androidx.lifecycle.LiveData
+import app.tgayle.inboxforreddit.model.RedditAccount
 import app.tgayle.inboxforreddit.model.RedditMessage
+import net.dean.jraw.RedditClient
 
 interface InboxScreenModel {
     interface Listener {
-
+        fun onRefresh()
     }
 
-    fun getInbox(): LiveData<List<RedditMessage>>
+    fun getInbox(user: LiveData<RedditAccount>): LiveData<List<RedditMessage>>?
+    fun onRefresh(user: Pair<RedditClient, RedditAccount>?)
 }

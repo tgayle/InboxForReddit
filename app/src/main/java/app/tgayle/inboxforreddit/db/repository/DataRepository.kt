@@ -1,5 +1,6 @@
 package app.tgayle.inboxforreddit.db.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import app.tgayle.inboxforreddit.db.AppDatabase
@@ -10,6 +11,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import net.dean.jraw.RedditClient
 import net.dean.jraw.oauth.AccountHelper
+import java.util.*
 
 class DataRepository(private val appDatabase: AppDatabase,
                      private val accountHelper: AccountHelper,
@@ -35,12 +37,34 @@ class DataRepository(private val appDatabase: AppDatabase,
         appDatabase.messages().upsert(messages)
     }
 
+    fun getMessages(user: LiveData<Pair<RedditClient, RedditAccount>>) = Transformations.switchMap(user) {
+        appDatabase.messages().getUserMessages(it.second.name)
+    }
+
     fun getInbox(user: LiveData<RedditAccount>) = Transformations.switchMap(user) {
         appDatabase.messages().getConversationPreviews(it)
     }
 
-    fun getInboxFromClientAndAccount(user: LiveData<Pair<RedditClient, RedditAccount>>) = Transformations.switchMap(user) {
-        appDatabase.messages().getConversationPreviews(it.second)
+    fun refreshMessages(client: RedditClient, account: RedditAccount) = GlobalScope.async {
+        Log.d("DataRepo", "Starting load...")
+        client.autoRenew = true
+        val redditMessages = client
+            .me()
+            .inbox()
+            .iterate("messages")
+            .limit(1000).build()
+            .accumulateMerged(500)
+        Log.d("DataRepo", "${redditMessages.size} received!")
+
+        return@async saveMessages(redditMessages.map {
+            RedditMessage(UUID.randomUUID(), account.name, it.author!!, it.dest, it.isUnread, it.fullName,it.created, it.body, it.distinguished)
+        }).await()
+    }
+
+    fun getInboxFromClientAndAccount(user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<List<RedditMessage>> {
+        return Transformations.switchMap(user) {
+            appDatabase.messages().getConversationPreviews(it.second)
+        }
     }
 
 }
