@@ -22,13 +22,13 @@ import java.util.*
  */
 @Entity(tableName = "messages")
 open class RedditMessage(
-    @PrimaryKey
     open val uuid: UUID,
     @ForeignKey(entity = RedditAccount::class, parentColumns = ["name"], childColumns = ["owner"])
     open val owner: String,
     open val author: String,
     open val destination: String,
     open val unread: Boolean,
+    @PrimaryKey
     open val fullName: String,
     open val created: Date,
     open val body: String,
