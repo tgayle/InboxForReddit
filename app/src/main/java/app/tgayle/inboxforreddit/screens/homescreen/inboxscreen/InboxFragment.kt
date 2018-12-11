@@ -28,7 +28,7 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener {
         val view =  inflater.inflate(R.layout.inbox_fragment, container, false)
         rvAdapter = MessageRecyclerViewAdapter()
 
-        viewModel.getUserMessages(activityViewModel.getRedditClient()).observe(this, Observer {
+        viewModel.getInboxFromClientAndAccount(activityViewModel.getRedditClient()).observe(this, Observer {
             rvAdapter.resetItems(it)
         })
 

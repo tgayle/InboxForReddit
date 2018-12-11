@@ -32,7 +32,7 @@ class MessageRecyclerViewAdapter(private var items: List<RedditMessage> = arrayL
         private val messageView = itemView.findViewById<TextView>(R.id.message_rv_item_message)
 
         fun bind(redditMessage: RedditMessage) {
-            authorView.text = "${redditMessage.author} x ${redditMessage.correspondent}"
+            authorView.text = redditMessage.correspondent
             dateView.text = SimpleDateFormat.getDateInstance().format(redditMessage.created)
             messageView.text = redditMessage.body
         }

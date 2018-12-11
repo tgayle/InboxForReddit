@@ -27,14 +27,14 @@ class SplashFragmentViewModel(val dataRepository: DataRepository): ViewModel(), 
 
         if (users.isEmpty()) {
             Log.d("Splash", "Navigating to Login")
-            navigationDecision.value = R.id.action_splashFragment_to_loginFragment
+            navigationDecision.value = R.id.loginFragment
         } else {
             GlobalScope.launch(Dispatchers.Main) {
             locatedRedditAccount.value = dataRepository.getClientFromUser(users[0]).await()
             viewModelDispatch.value = SplashScreenAction.UPDATE_ACTIVITY_VM_WITH_REDDIT
             Log.d("Splash", "Navigating to Home")
 
-            navigationDecision.value = R.id.action_splashFragment_to_homeFragment
+            navigationDecision.value = R.id.homeFragment
             }
         }
     }

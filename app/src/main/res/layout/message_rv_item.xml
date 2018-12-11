@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_margin="8dp"
-        app:cardElevation="6dp"
-        app:cardCornerRadius="6dp"
         android:minHeight="60dp">
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="8dp">
         <TextView
                 android:id="@+id/message_rv_item_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Author x Correspondent"
+                android:text="Correspondent"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline" android:layout_marginEnd="8dp"/>
+                app:layout_constraintTop_toTopOf="parent"></TextView>
 
         <TextView
                 android:layout_width="wrap_content"
@@ -28,8 +26,7 @@
                 android:id="@+id/message_rv_item_date"
                 android:text="Some Random Date"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/message_rv_item_author"
-                app:layout_constraintStart_toStartOf="@+id/guideline" android:layout_marginStart="8dp"/>
+                app:layout_constraintTop_toTopOf="@id/message_rv_item_author"/>
 
         <TextView
                 android:id="@+id/message_rv_item_message"
@@ -37,16 +34,9 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginStart="6dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Message Text"
-                android:layout_marginEnd="6dp"/>
-        <androidx.constraintlayout.widget.Guideline
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/guideline"
-                app:layout_constraintGuide_begin="249dp"
-                android:orientation="vertical"/>
+                android:text="Message Text"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

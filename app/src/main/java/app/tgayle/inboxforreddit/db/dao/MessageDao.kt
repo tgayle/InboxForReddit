@@ -5,7 +5,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import app.tgayle.inboxforreddit.model.RedditAccount
 import app.tgayle.inboxforreddit.model.RedditMessage
 
 @Dao
@@ -40,7 +39,12 @@ abstract class MessageDao {
         return insertionResults
     }
 
-    @Query("SELECT * FROM messages WHERE owner = :user ORDER BY created DESC LIMIT 1")
-    abstract fun getConversationPreviews(user: RedditAccount): LiveData<List<RedditMessage>>
+    @Query("SELECT * " +
+            "FROM messages " +
+            "WHERE owner = :username " +
+            "GROUP BY parentName " +
+            "HAVING created = MAX(created) " +
+            "ORDER BY created DESC")
+    abstract fun getConversationPreviews(username: String): LiveData<List<RedditMessage>>
 
 }

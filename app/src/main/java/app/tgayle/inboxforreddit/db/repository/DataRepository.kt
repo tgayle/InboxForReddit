@@ -42,28 +42,47 @@ class DataRepository(private val appDatabase: AppDatabase,
     }
 
     fun getInbox(user: LiveData<RedditAccount>) = Transformations.switchMap(user) {
-        appDatabase.messages().getConversationPreviews(it)
+        appDatabase.messages().getConversationPreviews(it.name)
     }
 
     fun refreshMessages(client: RedditClient, account: RedditAccount) = GlobalScope.async {
         Log.d("DataRepo", "Starting load...")
         client.autoRenew = true
-        val redditMessages = client
+        val redditMessages = client // Move into another coroutine.
             .me()
             .inbox()
-            .iterate("messages")
+            .iterate("inbox")
             .limit(1000).build()
             .accumulateMerged(500)
+
+        val redditMessagesSent = client
+            .me()
+            .inbox()
+            .iterate("sent")
+            .limit(1000).build()
+            .accumulateMerged(500)
+
         Log.d("DataRepo", "${redditMessages.size} received!")
 
-        return@async saveMessages(redditMessages.map {
-            RedditMessage(UUID.randomUUID(), account.name, it.author!!, it.dest, it.isUnread, it.fullName,it.created, it.body, it.distinguished)
-        }).await()
+        val allMessages = redditMessages + redditMessagesSent
+
+        val allPrivateMessages = allMessages.filter { it.fullName.startsWith("t4") } // only private messages
+
+        return@async saveMessages(allPrivateMessages.map { message ->
+            val parentId = message.firstMessage?: message.fullName
+            Log.d("Data Repo", "${message.firstMessage}, ${message.fullName}")
+            RedditMessage(UUID.randomUUID(), account.name, message.author!!, message.dest, message.isUnread,
+                message.fullName, parentId, message.created, message.body, message.distinguished)
+
+        }.also {
+            Log.d("Data Repo", "${it.size} messages to be saved.")
+        })
+            .await()
     }
 
     fun getInboxFromClientAndAccount(user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<List<RedditMessage>> {
         return Transformations.switchMap(user) {
-            appDatabase.messages().getConversationPreviews(it.second)
+            appDatabase.messages().getConversationPreviews(it.second.name)
         }
     }
 

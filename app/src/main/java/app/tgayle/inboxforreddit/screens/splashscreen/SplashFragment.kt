@@ -27,7 +27,6 @@ class SplashFragment : Fragment(), SplashScreenModel.Listener {
         activityVm = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(AppSingleton.dataRepository)).get(MainActivityViewModel::class.java)
         super.onCreate(savedInstanceState)
 
-        listenForNavigation()
         listenForUsers()
     }
 
