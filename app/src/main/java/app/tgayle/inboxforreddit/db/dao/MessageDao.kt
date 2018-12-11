@@ -47,4 +47,12 @@ abstract class MessageDao {
             "ORDER BY created DESC")
     abstract fun getConversationPreviews(username: String): LiveData<List<RedditMessage>>
 
+    @Query("SELECT COUNT(*) FROM messages WHERE owner = :username")
+    abstract fun getUserMessageCount(username: String): Int
+
+    @Query("SELECT * FROM messages WHERE owner = :username AND author = :username ORDER BY created DESC LIMIT 1")
+    abstract fun getNewestSentUserMessageSync(username: String): RedditMessage
+
+    @Query("SELECT * FROM messages WHERE owner = :username AND destination = :username ORDER BY created DESC LIMIT 1")
+    abstract fun getNewestReceivedUserMessageSync(username: String): RedditMessage
 }
