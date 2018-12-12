@@ -10,6 +10,7 @@ import app.tgayle.inboxforreddit.network.RedditApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import net.dean.jraw.RedditClient
 import net.dean.jraw.models.Message
 import net.dean.jraw.oauth.AccountHelper
@@ -91,7 +92,7 @@ class DataRepository(private val appDatabase: AppDatabase,
                 }
             }
         }
-        messageRoutines.forEach { it.await() }
+        messageRoutines.awaitAll()
 
         val allPrivateMessages = allNewMessages.filter { it.fullName.startsWith("t4") }
         val allMessagesAsRedditMessages = allPrivateMessages.map {
@@ -118,7 +119,7 @@ class DataRepository(private val appDatabase: AppDatabase,
                 allLoadedMessages += messages
             }
         }
-        messageRequests.forEach { it.await() }
+        messageRequests.awaitAll()
 
         val allPrivateMessages = allLoadedMessages.filter { it.fullName.startsWith("t4") } // only private messages
 

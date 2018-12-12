@@ -16,7 +16,12 @@
                 app:popUpToInclusive="true" app:popUpTo="@+id/splashFragment"/>
     </fragment>
     <fragment android:id="@+id/homeFragment" android:name="app.tgayle.inboxforreddit.screens.homescreen.HomeFragment"
-              android:label="fragment_home" tools:layout="@layout/fragment_home"/>
-    <fragment android:id="@+id/loginFragment" android:name="app.tgayle.inboxforreddit.screens.loginscreen.LoginScreenFragment"
-              android:label="fragment_login" tools:layout="@layout/fragment_login"/>
+              android:label="Home" tools:layout="@layout/fragment_home">
+        <action android:id="@+id/action_homeFragment_to_home_screen_navigation"
+                app:destination="@id/home_screen_navigation"/>
+    </fragment>
+    <fragment android:id="@+id/loginFragment"
+              android:name="app.tgayle.inboxforreddit.screens.loginscreen.LoginScreenFragment"
+              android:label="Login" tools:layout="@layout/fragment_login"/>
+    <include app:graph="@navigation/home_screen_navigation"/>
 </navigation>

@@ -3,7 +3,7 @@ package app.tgayle.inboxforreddit.db
 import net.dean.jraw.models.PersistedAuthData
 import net.dean.jraw.oauth.DeferredPersistentTokenStore
 
-class RoomTokenStore(val appDatabase: AppDatabase): DeferredPersistentTokenStore() {
+class RoomTokenStore(private val appDatabase: AppDatabase): DeferredPersistentTokenStore() {
     init {
         autoPersist = true
         load()
