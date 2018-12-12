@@ -1,9 +1,6 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-kapt'
-
 apply plugin: 'kotlin-android-extensions'
 
 android {
@@ -21,10 +18,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-
-    kapt {
-        generateStubs = true
     }
 
     dataBinding {
@@ -90,7 +83,7 @@ dependencies {
     implementation "androidx.room:room-rxjava2:$room_version"
 
     // Paging
-    def paging_version = "2.1.0-beta01"
+    def paging_version = "2.1.0-rc01"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 
     // use -ktx for Kotlin
@@ -102,7 +95,7 @@ dependencies {
     implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha08'
 
     // use -ktx for Kotlin
-    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha07'
+    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha08'
 
     // use -ktx for Kotlin
     androidTestImplementation 'android.arch.navigation:navigation-testing:1.0.0-alpha08'

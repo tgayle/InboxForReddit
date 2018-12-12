@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import net.dean.jraw.RedditClient
 
 class SplashFragmentViewModel(val dataRepository: DataRepository): ViewModel(), SplashScreenModel {
-    override val navigationDecision = SingleLiveEvent<Int?>()
+    val navigationDecision = SingleLiveEvent<Int?>()
     private val viewModelDispatch = MutableLiveData<SplashScreenAction?>()
     private val locatedRedditAccount = MutableLiveData<Pair<RedditClient, RedditAccount>>()
 
@@ -22,19 +22,18 @@ class SplashFragmentViewModel(val dataRepository: DataRepository): ViewModel(), 
         UPDATE_ACTIVITY_VM_WITH_REDDIT
     }
 
-    override fun onUsersUpdate(users: List<RedditAccount>?) {
-        if (users == null) return
+    init {
+        GlobalScope.launch(Dispatchers.Main) {
+            val users = dataRepository.getUsersDeferred().await()
+            if (users.isEmpty()) {
+                Log.d("Splash", "Navigating to Login")
+                navigationDecision.value = R.id.action_splashFragment_to_loginFragment
+            } else {
+                locatedRedditAccount.value = dataRepository.getClientFromUser(users[0]).await()
+                viewModelDispatch.value = SplashScreenAction.UPDATE_ACTIVITY_VM_WITH_REDDIT
+                Log.d("Splash", "Navigating to Home")
 
-        if (users.isEmpty()) {
-            Log.d("Splash", "Navigating to Login")
-            navigationDecision.value = R.id.loginFragment
-        } else {
-            GlobalScope.launch(Dispatchers.Main) {
-            locatedRedditAccount.value = dataRepository.getClientFromUser(users[0]).await()
-            viewModelDispatch.value = SplashScreenAction.UPDATE_ACTIVITY_VM_WITH_REDDIT
-            Log.d("Splash", "Navigating to Home")
-
-            navigationDecision.value = R.id.homeFragment
+                navigationDecision.value = R.id.action_splashFragment_to_homeFragment
             }
         }
     }

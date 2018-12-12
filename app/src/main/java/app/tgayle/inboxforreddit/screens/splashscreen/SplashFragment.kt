@@ -15,6 +15,10 @@ import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import app.tgayle.inboxforreddit.screens.splashscreen.SplashFragmentViewModel.SplashScreenAction.UPDATE_ACTIVITY_VM_WITH_REDDIT
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SplashFragment : Fragment(), SplashScreenModel.Listener {
     lateinit var vmFactory: SplashFragmentViewModelFactory
@@ -26,8 +30,6 @@ class SplashFragment : Fragment(), SplashScreenModel.Listener {
         viewModel = ViewModelProviders.of(this, vmFactory).get(SplashFragmentViewModel::class.java)
         activityVm = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(AppSingleton.dataRepository)).get(MainActivityViewModel::class.java)
         super.onCreate(savedInstanceState)
-
-        listenForUsers()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -42,17 +44,16 @@ class SplashFragment : Fragment(), SplashScreenModel.Listener {
         viewModel.navigationDecision.observe(this, Observer { navigationId ->
             if (navigationId != null) {
                 Log.d("Splash Emission", navigationId.toString())
-                findNavController().let {
-                    it.popBackStack()
-                    it.navigate(navigationId)
+                GlobalScope.launch(Dispatchers.Main) {
+                    delay(1000)
+                    findNavController().let {
+                        it.popBackStack()
+                        it.navigate(navigationId)
+                    }
                 }
             }
         })
     }
-
-    override fun listenForUsers() = viewModel.getAllUsers().observe(this, Observer {
-        viewModel.onUsersUpdate(it)
-    })
 
     override fun listenForActionDispatch() {
         viewModel.getViewmodelDispatch().observe(this, Observer {
@@ -62,7 +63,7 @@ class SplashFragment : Fragment(), SplashScreenModel.Listener {
                         if (clientAndAccount != null) activityVm.onRedditClientUpdated(clientAndAccount);
                     })
                 }
-                null -> TODO()
+                null -> TODO("Is it even possible for this to be null?")
             }
         })
     }

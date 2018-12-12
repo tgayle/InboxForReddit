@@ -1,32 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".screens.splashscreen.SplashFragment"
-        android:id="@+id/frameLayout">
-
-    <!-- TODO: Update blank fragment layout -->
+        android:background="@color/colorPrimary"
+        tools:context=".screens.splashscreen.SplashFragment">
     <TextView
+            android:text="Inbox"
+            android:textSize="32sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Loading..."
-            android:id="@+id/textView"
-            app:layout_constraintStart_toStartOf="@id/progressBar"
-            app:layout_constraintEnd_toEndOf="@id/progressBar"
-            app:layout_constraintBottom_toTopOf="@+id/progressBar"
+            android:id="@+id/splashFragment_inboxText"
+            android:textColor="#fff"
+            app:layout_constraintHorizontal_bias="0.2"
+            app:layout_constraintVertical_bias="0.15"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"/>
-    <ProgressBar
-            style="?android:attr/progressBarStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/splashFragment_forText"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    <TextView
+            android:text="For"
+            android:textSize="32sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/progressBar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
+            android:id="@+id/splashFragment_forText"
+            android:textColor="#fff"
+            app:layout_constraintBottom_toTopOf="@+id/splashFragment_redditText"
+            app:layout_constraintStart_toStartOf="@id/splashFragment_inboxText"
+            app:layout_constraintTop_toBottomOf="@+id/splashFragment_inboxText"
+            app:layout_constraintVertical_chainStyle="packed"/>
+    <TextView
+            android:text="Reddit"
+            android:textSize="32sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            app:layout_constraintStart_toStartOf="@id/splashFragment_inboxText"
+            app:layout_constraintTop_toBottomOf="@id/splashFragment_forText"
+            android:id="@+id/splashFragment_redditText"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
+    <androidx.appcompat.widget.AppCompatImageView
+            app:layout_constraintStart_toEndOf="@id/splashFragment_redditText"
+            app:layout_constraintBottom_toBottomOf="@id/splashFragment_redditText"
+            app:layout_constraintTop_toTopOf="@id/splashFragment_redditText"
+            app:srcCompat="@drawable/inbox_black_24"
+            android:tint="#fff"
+            android:layout_marginLeft="16dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

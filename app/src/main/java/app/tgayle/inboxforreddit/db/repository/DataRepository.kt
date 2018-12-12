@@ -21,6 +21,9 @@ class DataRepository(private val appDatabase: AppDatabase,
                      private val redditApiService: RedditApiService) {
 
     fun getUsers() = appDatabase.accounts().getAllUsers()
+    fun getUsersDeferred() = GlobalScope.async(Dispatchers.IO ) {
+        return@async appDatabase.accounts().getAllSync()
+    }
     fun saveUser(user: RedditClient) = GlobalScope.async {
             val account = user.me().query().account
             if (account != null) {

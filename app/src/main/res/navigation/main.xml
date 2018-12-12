@@ -9,7 +9,9 @@
     <fragment android:id="@+id/splashFragment" android:name="app.tgayle.inboxforreddit.screens.splashscreen.SplashFragment"
               android:label="fragment_splash" tools:layout="@layout/fragment_splash">
         <action android:id="@+id/action_splashFragment_to_homeFragment" app:destination="@id/homeFragment"
-                app:popUpToInclusive="true" app:popUpTo="@+id/splashFragment"/>
+                app:popUpToInclusive="true" app:popUpTo="@+id/splashFragment"
+                app:exitAnim="@android:anim/fade_out"
+                app:enterAnim="@android:anim/fade_in"/>
         <action android:id="@+id/action_splashFragment_to_loginFragment" app:destination="@id/loginFragment"
                 app:popUpToInclusive="true" app:popUpTo="@+id/splashFragment"/>
     </fragment>
