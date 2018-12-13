@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,4 +13,20 @@
             app:navGraph="@navigation/main"
             app:defaultNavHost="true"
             android:id="@+id/nav_host"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+            style="@style/Widget.MaterialComponents.BottomAppBar"
+            android:id="@+id/home_bottom_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:navigationIcon="@drawable/menu_hamburger"
+            android:backgroundTint="@color/colorPrimary"
+            app:menu="@menu/home_bottom_navbar"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:id="@+id/home_fab"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@id/home_bottom_bar"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

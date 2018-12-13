@@ -9,6 +9,6 @@ import app.tgayle.inboxforreddit.db.repository.DataRepository
 class HomeFragmentViewModel(val dataRepository: DataRepository): ViewModel() {
 
     fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
-        controller.navigate(destination.id)
+//        controller.navigate(destination.id)
     }
 }

@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-    android:title="Inbox"
-    android:icon="@drawable/inbox_black_24"
-    android:id="@+id/home_navbar_inbox">
+            android:title="Filter"
+            android:icon="@drawable/icon_filter"
+            android:id="@+id/appbar_filter"
+            app:showAsAction="ifRoom">
     </item>
     <item
-        android:title="Unread"
-        android:icon="@drawable/mailbox"
-        android:id="@+id/home_navbar_unread">
-
+            android:title="Search"
+            android:icon="@drawable/icon_search"
+            android:id="@+id/appbar_search"
+            app:showAsAction="ifRoom">
     </item>
     <item
-        android:title="Sent"
-        android:icon="@drawable/inbox_sent_black_24"
-        android:id="@+id/home_navbar_sent">
+        android:title="Settings"
+        android:id="@+id/appbar_settings"
+        app:showAsAction="never">
     </item>
 </menu>

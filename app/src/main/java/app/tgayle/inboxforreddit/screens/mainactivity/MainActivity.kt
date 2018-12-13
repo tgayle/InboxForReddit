@@ -9,6 +9,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), MainActivityModel.Listener {
     lateinit var vmFactory: MainActivityViewModelFactory
@@ -18,7 +19,7 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        setSupportActionBar(home_bottom_bar)
         navController = findNavController(R.id.nav_host)
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration())
         vmFactory = MainActivityViewModelFactory(AppSingleton.dataRepository)

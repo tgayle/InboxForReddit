@@ -11,12 +11,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeFragment : NavHostFragment(), NavController.OnDestinationChangedListener {
     lateinit var activityViewModel: MainActivityViewModel
@@ -38,14 +38,15 @@ class HomeFragment : NavHostFragment(), NavController.OnDestinationChangedListen
         return view
     }
 
-    fun setupViews(view: View) {
-        val bottomNavigationBar = view.findViewById<BottomNavigationView>(R.id.home_bottom_nav)
+    fun setupViews(view: View) { //TODO: Move bottom navbar to main activity.
         val homeScreenNavHostView = view.findViewById<View>(R.id.home_fragment_navhost)
         val homeScreenNavHost = Navigation.findNavController(homeScreenNavHostView)
-        NavigationUI.setupWithNavController(bottomNavigationBar, homeScreenNavHost)
-        NavigationUI.setupActionBarWithNavController(activity!! as AppCompatActivity, homeScreenNavHost)
+
+        NavigationUI.setupActionBarWithNavController(activity!! as AppCompatActivity, homeScreenNavHost, appBarConfiguration())
         homeScreenNavHost.addOnDestinationChangedListener(this)
     }
+
+    private fun appBarConfiguration() = AppBarConfiguration.Builder(R.id.inboxFragment).build()
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
        viewModel.onDestinationChanged(controller, destination, arguments)
