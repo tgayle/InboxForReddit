@@ -61,7 +61,15 @@ class DataRepository(private val appDatabase: AppDatabase,
 
         val numPreexistingUserMessages = appDatabase.messages().getUserMessageCount(account.name)
         Log.d("Data Repo", "Message # for ${account.name} is $numPreexistingUserMessages")
-        if (numPreexistingUserMessages == 0) return@async loadAllPastMessages(client, account).await()
+
+        return@async if (numPreexistingUserMessages == 0) {
+            loadAllPastMessages(client, account).await()
+        } else {
+            loadNewestMessages(client, account).await()
+        }
+    }
+
+    private fun loadNewestMessages(client: RedditClient, account: RedditAccount) = GlobalScope.async {
         Log.d("Data Repo", "Attempting to load newest messages...")
         val newestSentMessage = appDatabase.messages().getNewestSentUserMessageSync(account.name)
         val newestReceivedMessage = appDatabase.messages().getNewestReceivedUserMessageSync(account.name)
@@ -74,12 +82,7 @@ class DataRepository(private val appDatabase: AppDatabase,
         val wheres = arrayOf(Pair("inbox", newestReceivedMessage), Pair("sent", newestSentMessage))
         val messageRoutines = wheres.map { (where, newestMessageForThisWhere) ->
             GlobalScope.async (Dispatchers.IO) {
-                val paginator = client
-                    .me()
-                    .inbox()
-                    .iterate(where)
-                    .limit(30)
-                    .build()
+                val paginator = getInboxPaginator(client, where, 30)
 
                 for (page in paginator.iterator()) {
                     val messages = page.takeWhile { it.fullName > newestMessageForThisWhere.fullName }
@@ -94,13 +97,9 @@ class DataRepository(private val appDatabase: AppDatabase,
         }
         messageRoutines.awaitAll()
 
-        val allPrivateMessages = allNewMessages.filter { it.fullName.startsWith("t4") }
-        val allMessagesAsRedditMessages = allPrivateMessages.map {
-            RedditMessage(UUID.randomUUID(), account.name, it.author!!, it.dest, it.isUnread, it.fullName,
-                it.firstMessage?: it.fullName, it.created, it.body, it.distinguished)
-        }
-
-        return@async saveMessages(allMessagesAsRedditMessages)
+        val allPrivateMessages = filterToPrivateMessages(allNewMessages)
+        val allMessagesAsRedditMessages = convertNetMessageToLocalMessage(account, allPrivateMessages)
+        return@async saveMessages(allMessagesAsRedditMessages).await()
     }
 
     private fun loadAllPastMessages(client: RedditClient, account: RedditAccount) = GlobalScope.async {
@@ -110,30 +109,35 @@ class DataRepository(private val appDatabase: AppDatabase,
 
         val messageRequests = wheres.map {where ->
             GlobalScope.async(Dispatchers.IO) {
-                val messages = client
-                    .me()
-                    .inbox()
-                    .iterate(where)
-                    .limit(1000).build()
-                    .accumulateMerged(-1)
+                val messages = getInboxPaginator(client, where, 1000).accumulateMerged(-1)
                 allLoadedMessages += messages
             }
         }
         messageRequests.awaitAll()
 
-        val allPrivateMessages = allLoadedMessages.filter { message ->
-            message.fullName.startsWith("t4") // only private messages
-        }
-
-        val messagesAsLocalMessages = allPrivateMessages.map { message ->
-            val parentId = message.firstMessage?: message.fullName
-
-            return@map RedditMessage(UUID.randomUUID(), account.name, message.author!!, message.dest,
-                message.isUnread, message.fullName, parentId, message.created, message.body, message.distinguished)
-
-        }
+        val allPrivateMessages = filterToPrivateMessages(allLoadedMessages)
+        val messagesAsLocalMessages = convertNetMessageToLocalMessage(account, allPrivateMessages)
         return@async saveMessages(messagesAsLocalMessages).await()
     }
+
+    private fun convertNetMessageToLocalMessage(account: RedditAccount, messages: List<Message>) = messages.map { message ->
+        val parentId = message.firstMessage?: message.fullName
+
+        return@map RedditMessage(UUID.randomUUID(), account.name, message.author!!, message.dest,
+            message.isUnread, message.fullName, parentId, message.created, message.body, message.distinguished)
+
+    }
+
+    private fun filterToPrivateMessages(messages: List<Message>) = messages.filter { message ->
+        message.fullName.startsWith("t4") // only private messages
+    }
+
+    private fun getInboxPaginator(client: RedditClient, where: String, limit: Int) = client
+        .me()
+        .inbox()
+        .iterate(where)
+        .limit(limit)
+        .build()
 
     fun getInboxFromClientAndAccount(user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<List<RedditMessage>> {
         return Transformations.switchMap(user) {
