@@ -17,7 +17,7 @@ class MessageRecyclerViewAdapter(private var items: List<RedditMessage> = arrayL
     override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(position, itemCount, items[position])
     }
 
     fun resetItems(newItems: List<RedditMessage>) {
@@ -31,7 +31,7 @@ class MessageRecyclerViewAdapter(private var items: List<RedditMessage> = arrayL
         private val dateView = itemView.findViewById<TextView>(R.id.message_rv_item_date)
         private val messageView = itemView.findViewById<TextView>(R.id.message_rv_item_message)
 
-        fun bind(redditMessage: RedditMessage) {
+        fun bind(position: Int, totalItems: Int, redditMessage: RedditMessage) {
             authorView.text = redditMessage.correspondent
             dateView.text = SimpleDateFormat.getDateInstance().format(redditMessage.created)
             messageView.text = redditMessage.body

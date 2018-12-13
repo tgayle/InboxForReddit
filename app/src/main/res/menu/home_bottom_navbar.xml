@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+            android:title="Settings"
+            android:id="@+id/appbar_settings"
+            app:showAsAction="never">
+    </item>
+    <item
             android:title="Filter"
             android:icon="@drawable/icon_filter"
             android:id="@+id/appbar_filter"
@@ -12,9 +17,5 @@
             android:id="@+id/appbar_search"
             app:showAsAction="ifRoom">
     </item>
-    <item
-        android:title="Settings"
-        android:id="@+id/appbar_settings"
-        app:showAsAction="never">
-    </item>
+
 </menu>

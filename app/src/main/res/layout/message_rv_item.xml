@@ -18,7 +18,7 @@
                 android:text="Correspondent"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"></TextView>
+                app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
                 android:layout_width="wrap_content"

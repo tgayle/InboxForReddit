@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.db.repository.DataRepository
 import app.tgayle.inboxforreddit.model.RedditAccount
 import kotlinx.coroutines.Dispatchers
@@ -27,5 +28,14 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
             dataRepository.refreshMessages(user.first, user.second).await()
             refreshing.value = false
         }
+    }
+
+    override fun onFilterSelection(item: Int?): Boolean {
+        when (item) {
+            R.id.menu_filter_inbox ->  {
+
+            }
+        }
+        return false
     }
 }

@@ -1,9 +1,8 @@
 package app.tgayle.inboxforreddit.screens.homescreen.inboxscreen
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +12,7 @@ import app.tgayle.inboxforreddit.screens.homescreen.BaseHomeScreenFragment
 import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.view.MessageRecyclerViewAdapter
 import kotlinx.android.synthetic.main.inbox_fragment.*
 
-class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener {
+class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, PopupMenu.OnMenuItemClickListener {
     private lateinit var viewModel: InboxFragmentViewModel
     private lateinit var rvAdapter: MessageRecyclerViewAdapter
 
@@ -26,6 +25,7 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view =  inflater.inflate(R.layout.inbox_fragment, container, false)
+        setHasOptionsMenu(true)
         rvAdapter = MessageRecyclerViewAdapter()
 
         viewModel.getInboxFromClientAndAccount(activityViewModel.getRedditClient()).observe(this, Observer {
@@ -55,4 +55,26 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener {
         viewModel.onRefresh(activityViewModel.getRedditClient().value)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.home_bottom_navbar, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            R.id.appbar_filter -> { // Display Filter
+                val popupMenu = PopupMenu(context, activity!!.findViewById(R.id.appbar_filter))
+                val inflater = popupMenu.menuInflater
+                inflater.inflate(R.menu.filter_options, popupMenu.menu)
+                popupMenu.setOnMenuItemClickListener(this)
+                popupMenu.show()
+            }
+            R.id.appbar_search -> { // Enable Search?
+            }
+        }
+        return false
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        return viewModel.onFilterSelection(item?.itemId)
+    }
 }
