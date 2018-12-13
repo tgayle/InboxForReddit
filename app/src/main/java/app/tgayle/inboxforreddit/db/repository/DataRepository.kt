@@ -68,7 +68,7 @@ class DataRepository(private val appDatabase: AppDatabase,
         /*
         Be lazy about loading new messages. Start at one page, and if current page doesn't contain the last message
         in the database, continue and load another page. Need separate message for sent and received to make sure we've
-        stopped when we reach the newest message in the database,
+        stopped when we reach the newest message in the database.
          */
         val allNewMessages = mutableListOf<Message>()
         val wheres = arrayOf(Pair("inbox", newestReceivedMessage), Pair("sent", newestSentMessage))
@@ -82,13 +82,13 @@ class DataRepository(private val appDatabase: AppDatabase,
                     .build()
 
                 for (page in paginator.iterator()) {
-                    val messages = page.takeWhile { it.fullName < newestMessageForThisWhere.fullName }
+                    val messages = page.takeWhile { it.fullName > newestMessageForThisWhere.fullName }
                     /*
                     If the size of messages is less than the size of the page, then we know that the current page must
                     have contained the newest message we have locally, so we can stop loading pages.
                      */
-                    if (messages.size < page.size) break
                     allNewMessages += messages
+                    if (messages.size < page.size) break
                 }
             }
         }
@@ -121,16 +121,18 @@ class DataRepository(private val appDatabase: AppDatabase,
         }
         messageRequests.awaitAll()
 
-        val allPrivateMessages = allLoadedMessages.filter { it.fullName.startsWith("t4") } // only private messages
+        val allPrivateMessages = allLoadedMessages.filter { message ->
+            message.fullName.startsWith("t4") // only private messages
+        }
 
-        return@async saveMessages(allPrivateMessages.map { message ->
+        val messagesAsLocalMessages = allPrivateMessages.map { message ->
             val parentId = message.firstMessage?: message.fullName
 
             return@map RedditMessage(UUID.randomUUID(), account.name, message.author!!, message.dest,
                 message.isUnread, message.fullName, parentId, message.created, message.body, message.distinguished)
 
-        })
-            .await()
+        }
+        return@async saveMessages(messagesAsLocalMessages).await()
     }
 
     fun getInboxFromClientAndAccount(user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<List<RedditMessage>> {

@@ -28,9 +28,11 @@ abstract class MessageDao {
     // Insert new message or update preexisting message.
     fun upsert(messages: List<RedditMessage>): List<Long> {
         val insertionResults = insert(messages).toMutableList()
-        insertionResults.forEachIndexed { index, result ->
+
+        for ((index, result) in insertionResults.withIndex()) {
             // -1 means item wasn't inserted.
-            if (result != -1L) return@forEachIndexed
+            if (result != -1L) continue
+
             messages[index].run {
                 val upsertResult = insertReplacingOldMessage(fullName, unread)
                 insertionResults[index] = upsertResult
