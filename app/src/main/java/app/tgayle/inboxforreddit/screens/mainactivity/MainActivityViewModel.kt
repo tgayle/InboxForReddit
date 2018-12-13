@@ -11,6 +11,7 @@ import net.dean.jraw.RedditClient
 
 class MainActivityViewModel(dataRepository: DataRepository): ViewModel(), MainActivityModel {
     private val redditClient = MutableLiveData<Pair<RedditClient, RedditAccount>>()
+    private val currentToolbarText = MutableLiveData<String>()
 
     override fun onIntentOccurred(intent: Intent) {
     }
@@ -21,5 +22,11 @@ class MainActivityViewModel(dataRepository: DataRepository): ViewModel(), MainAc
     }
 
     fun getRedditClient(): LiveData<Pair<RedditClient, RedditAccount>> = redditClient
+    fun getCurrentToolbarText(): LiveData<String> = currentToolbarText
 
+    override fun requestToolbarTitleChange(title: String?) {
+        if (title != null) {
+            currentToolbarText.value = title
+        }
+    }
 }

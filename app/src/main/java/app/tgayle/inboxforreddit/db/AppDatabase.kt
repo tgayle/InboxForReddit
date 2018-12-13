@@ -11,7 +11,7 @@ import app.tgayle.inboxforreddit.model.RedditMessage
 import app.tgayle.inboxforreddit.model.RedditMessage.DistinguishedState.*
 import java.util.*
 
-@Database(entities = [RedditAccount::class, RedditMessage::class], version = 3)
+@Database(entities = [RedditAccount::class, RedditMessage::class], version = 4)
 @TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun accounts(): AccountDao

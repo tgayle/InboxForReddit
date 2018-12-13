@@ -130,7 +130,7 @@ class DataRepository(private val appDatabase: AppDatabase,
         val parentId = message.firstMessage?: message.fullName
 
         return@map RedditMessage(UUID.randomUUID(), account.name, message.author!!, message.dest,
-            message.isUnread, message.fullName, parentId, message.created, message.body, message.distinguished)
+            message.isUnread, message.fullName, parentId, message.created, message.subject, message.body, message.distinguished)
     }
 
     private fun filterToPrivateMessages(messages: List<Message>) = messages.filter { message ->

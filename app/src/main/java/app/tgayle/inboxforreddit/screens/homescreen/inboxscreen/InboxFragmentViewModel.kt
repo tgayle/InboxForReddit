@@ -31,6 +31,8 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
         }
     }
 
+    fun getCurrentFilterTitle() = Transformations.map(currentMessageFilter) { it.name.toLowerCase().capitalize() }
+
     override fun onRefresh(user: Pair<RedditClient, RedditAccount>?) {
         if (user == null) return
         GlobalScope.launch(Dispatchers.Main) {

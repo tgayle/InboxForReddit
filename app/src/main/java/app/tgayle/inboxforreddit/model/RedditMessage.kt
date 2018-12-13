@@ -32,6 +32,7 @@ open class RedditMessage(
     open val fullName: String,
     open val parentName: String,
     open val created: Date,
+    open val subject: String,
     open val body: String,
     open val distinguished: DistinguishedState) {
 
@@ -43,8 +44,9 @@ open class RedditMessage(
                 fullName: String,
                 parentName: String,
                 created: Date,
+                subject: String,
                 body: String,
-                jrawDistinguished: DistinguishedStatus): this(uuid, owner, author, destination, unread, fullName, parentName, created, body, DistinguishedState.resolveFrom(jrawDistinguished))
+                jrawDistinguished: DistinguishedStatus): this(uuid, owner, author, destination, unread, fullName, parentName, created, subject, body, DistinguishedState.resolveFrom(jrawDistinguished))
 
     @Ignore
     open val correspondent: String = if (owner == author) destination else author

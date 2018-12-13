@@ -36,6 +36,10 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
             inbox_fragment_refresh.isRefreshing = it
         })
 
+        viewModel.getCurrentFilterTitle().observe(this, Observer {
+            activityViewModel.requestToolbarTitleChange(it)
+        })
+
         return view
     }
 
@@ -47,7 +51,7 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
     }
 
     override fun onResume() {
-        onRefresh()
+        onRefresh() // TODO: Only refresh on resume if more than a minute has passed.
         super.onResume()
     }
 
@@ -61,7 +65,7 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
-            R.id.appbar_filter -> { // Display Filter
+            R.id.appbar_filter -> {
                 val popupMenu = PopupMenu(context, activity!!.findViewById(R.id.appbar_filter))
                 val inflater = popupMenu.menuInflater
                 inflater.inflate(R.menu.filter_options, popupMenu.menu)
