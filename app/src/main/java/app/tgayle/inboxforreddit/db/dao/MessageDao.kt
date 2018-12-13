@@ -16,6 +16,29 @@ abstract class MessageDao {
     @Query("SELECT * FROM messages WHERE owner = :username")
     abstract fun getUserMessages(username: String): LiveData<List<RedditMessage>>
 
+    @Query("SELECT * FROM messages WHERE owner = :username AND author = :username ORDER BY created DESC")
+    abstract fun getUserSentMessagesDesc(username: String): LiveData<List<RedditMessage>>
+
+    @Query("SELECT * FROM messages WHERE owner = :username AND unread = 1 ORDER BY created DESC")
+    abstract fun getUnreadMessagesDesc(username: String): LiveData<List<RedditMessage>>
+
+    @Query("""
+        SELECT *
+        FROM messages
+        WHERE owner = :username
+        GROUP BY parentName
+        HAVING created = MAX(created)
+        AND (COUNT(CASE WHEN unread = 1 then 1 end) >= 1)
+        ORDER BY created DESC
+    """)
+    abstract fun getConversationsWithUnreadMessages(username: String): LiveData<List<RedditMessage>>
+
+    @Query("SELECT * FROM messages WHERE owner = :username AND unread = 1")
+    abstract fun getUnreadMessagesSync(username: String): List<RedditMessage>
+
+    @Query("SELECT * FROM messages WHERE owner = :username AND unread = 1 ORDER BY created ASC LIMIT 1")
+    abstract fun getOldestUnreadMessageSync(username: String): RedditMessage
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     protected abstract fun insert(messages: List<RedditMessage>): List<Long>
 

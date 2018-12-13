@@ -33,8 +33,10 @@ class HomeFragment : NavHostFragment() {
         return view
     }
 
-    fun setupViews(view: View) { //TODO: Move bottom navbar to main activity.
+    fun setupViews(view: View) {
         val homeScreenNavHostView = view.findViewById<View>(R.id.home_fragment_navhost)
         val homeScreenNavHost = Navigation.findNavController(homeScreenNavHostView)
+        //TODO:  Bottom NavView
+        //TODO:  Toolbar Button Functionality
     }
 }

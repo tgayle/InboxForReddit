@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import app.tgayle.inboxforreddit.db.AppDatabase
+import app.tgayle.inboxforreddit.model.MessageFilterOption
 import app.tgayle.inboxforreddit.model.RedditAccount
 import app.tgayle.inboxforreddit.model.RedditMessage
 import app.tgayle.inboxforreddit.network.RedditApiService
@@ -72,14 +73,19 @@ class DataRepository(private val appDatabase: AppDatabase,
     private fun loadNewestMessages(client: RedditClient, account: RedditAccount) = GlobalScope.async {
         Log.d("Data Repo", "Attempting to load newest messages...")
         val newestSentMessage = appDatabase.messages().getNewestSentUserMessageSync(account.name)
-        val newestReceivedMessage = appDatabase.messages().getNewestReceivedUserMessageSync(account.name)
+        /*
+        Get oldest unread message to make sure we update messages that are unread. This is necessary since JRAW doesn't
+        currently support getting a specific message or adding a before/after query, so just load more messages to make
+        sure older messages are updated.
+         */
+        val oldestUnreadMessage = appDatabase.messages().getOldestUnreadMessageSync(account.name)
         /*
         Be lazy about loading new messages. Start at one page, and if current page doesn't contain the last message
         in the database, continue and load another page. Need separate message for sent and received to make sure we've
         stopped when we reach the newest message in the database.
          */
         val allNewMessages = mutableListOf<Message>()
-        val wheres = arrayOf(Pair("inbox", newestReceivedMessage), Pair("sent", newestSentMessage))
+        val wheres = arrayOf(Pair("inbox", oldestUnreadMessage), Pair("sent", newestSentMessage))
         val messageRoutines = wheres.map { (where, newestMessageForThisWhere) ->
             GlobalScope.async (Dispatchers.IO) {
                 val paginator = getInboxPaginator(client, where, 30)
@@ -125,7 +131,6 @@ class DataRepository(private val appDatabase: AppDatabase,
 
         return@map RedditMessage(UUID.randomUUID(), account.name, message.author!!, message.dest,
             message.isUnread, message.fullName, parentId, message.created, message.body, message.distinguished)
-
     }
 
     private fun filterToPrivateMessages(messages: List<Message>) = messages.filter { message ->
@@ -142,6 +147,20 @@ class DataRepository(private val appDatabase: AppDatabase,
     fun getInboxFromClientAndAccount(user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<List<RedditMessage>> {
         return Transformations.switchMap(user) {
             appDatabase.messages().getConversationPreviews(it.second.name)
+        }
+    }
+
+    fun getMessagesFromClientAndAccount(filterOption: MessageFilterOption?, user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<List<RedditMessage>> {
+        return Transformations.switchMap(user) {
+            val username = it.second.name
+            when (filterOption) {
+                MessageFilterOption.INBOX -> appDatabase.messages().getConversationPreviews(username)
+                MessageFilterOption.SENT -> appDatabase.messages().getUserSentMessagesDesc(username)
+                MessageFilterOption.UNREAD -> appDatabase.messages().getConversationsWithUnreadMessages(username)
+                else -> {
+                    appDatabase.messages().getConversationPreviews(username)
+                }
+            }
         }
     }
 
