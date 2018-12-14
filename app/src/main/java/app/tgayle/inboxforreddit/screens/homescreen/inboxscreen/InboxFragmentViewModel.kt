@@ -15,11 +15,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.dean.jraw.RedditClient
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), InboxScreenModel {
     private val isRefreshing = MutableLiveData<Boolean>()
     private val currentMessageFilter = MutableLiveData<MessageFilterOption>().default(
         MessageFilterOption.INBOX)
+    private var lastRefresh: Date? = null
+    private val timeBetweenAutomaticRefresh = TimeUnit.SECONDS.toMillis(30)
 
     override fun getInbox(user: LiveData<RedditAccount>): LiveData<List<RedditMessage>> = dataRepository.getInbox(user)
     fun getUserMessages(user: LiveData<Pair<RedditClient, RedditAccount>>) = dataRepository.getMessages(user)
@@ -33,13 +37,27 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
 
     fun getCurrentFilterTitle() = Transformations.map(currentMessageFilter) { it.name.toLowerCase().capitalize() }
 
-    override fun onRefresh(user: Pair<RedditClient, RedditAccount>?) {
+    override fun onRefresh(user: Pair<RedditClient, RedditAccount>?, wasUserInteractionInvolved: Boolean) {
         if (user == null) return
+        val currentTime = Date()
+
+        // Don't refresh if a refresh was requested because of an onResume or something that wasn't a direct result of
+        // user interaction.
+        if (!wasUserInteractionInvolved) {
+            lastRefresh.let {
+                if (it != null) {
+                    val tenMinutesPassed = it.time + timeBetweenAutomaticRefresh < currentTime.time
+                    if (!tenMinutesPassed) return
+                }
+            }
+        }
+
         GlobalScope.launch(Dispatchers.Main) {
             Log.d("Inbox", "Send refresh request.")
             isRefreshing.value = true
             dataRepository.refreshMessages(user.first, user.second).await()
             isRefreshing.value = false
+            lastRefresh = currentTime
         }
     }
 

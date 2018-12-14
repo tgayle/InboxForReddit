@@ -11,6 +11,6 @@ interface InboxScreenModel {
     }
 
     fun getInbox(user: LiveData<RedditAccount>): LiveData<List<RedditMessage>>?
-    fun onRefresh(user: Pair<RedditClient, RedditAccount>?)
+    fun onRefresh(user: Pair<RedditClient, RedditAccount>?, wasUserInteractionInvolved: Boolean = false)
     fun onFilterSelection(item: Int?): Boolean
 }

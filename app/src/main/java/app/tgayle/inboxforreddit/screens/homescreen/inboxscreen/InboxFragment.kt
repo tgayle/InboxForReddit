@@ -51,12 +51,12 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
     }
 
     override fun onResume() {
-        onRefresh() // TODO: Only refresh on resume if more than a minute has passed.
+        viewModel.onRefresh(activityViewModel.getRedditClient().value, false)
         super.onResume()
     }
 
     override fun onRefresh() {
-        viewModel.onRefresh(activityViewModel.getRedditClient().value)
+        viewModel.onRefresh(activityViewModel.getRedditClient().value, true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
