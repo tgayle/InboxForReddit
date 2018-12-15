@@ -91,7 +91,7 @@ class DataRepository(private val appDatabase: AppDatabase,
                 val paginator = getInboxPaginator(client, where, 30)
 
                 for (page in paginator.iterator()) {
-                    val messages = page.takeWhile { it.fullName > newestMessageForThisWhere.fullName }
+                    val messages = page.takeWhile { it.fullName >= newestMessageForThisWhere.fullName }
                     /*
                     If the size of messages is less than the size of the page, then we know that the current page must
                     have contained the newest message we have locally, so we can stop loading pages.
