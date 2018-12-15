@@ -25,9 +25,11 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavControl
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(home_bottom_bar)
+
         navController = findNavController(R.id.nav_host)
         navController.addOnDestinationChangedListener(this)
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration())
+
         vmFactory = MainActivityViewModelFactory(AppSingleton.dataRepository)
         viewModel = ViewModelProviders.of(this, vmFactory).get(MainActivityViewModel::class.java)
         viewModel.onIntentOccurred(intent) // Pass intent in case we start from some specific context.
@@ -55,7 +57,7 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavControl
 
     private fun enableToolbarScrolling() {
         val toolbarLayoutParams = main_toolbar.layoutParams as AppBarLayout.LayoutParams
-        toolbarLayoutParams.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL.or(AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP)
+        toolbarLayoutParams.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
         main_toolbar.layoutParams = toolbarLayoutParams
 
         val appbarLayoutParams = main_appbarlayout.layoutParams as CoordinatorLayout.LayoutParams

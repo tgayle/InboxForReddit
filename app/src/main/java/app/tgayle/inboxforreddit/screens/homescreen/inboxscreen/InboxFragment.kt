@@ -3,6 +3,7 @@ package app.tgayle.inboxforreddit.screens.homescreen.inboxscreen
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
+import androidx.core.view.doOnNextLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,9 +33,15 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
 
         viewModel.getInboxFromClientAndAccount(activityViewModel.getRedditClient()).observe(this, Observer {
             rvAdapter.resetItems(it)
-            val isLastItemVisible = rvLayoutManager.findLastCompletelyVisibleItemPosition() == rvAdapter.itemCount - 1
-            val toolbarScrollingEnabled = viewModel.shouldRequestPreventToolbarScroll(isLastItemVisible)
-            activityViewModel.requestChangeToolbarScrollState(toolbarScrollingEnabled)
+            /*
+            Use doOnNextLayout to make sure items have finished being laid out in the view so we can accurately decide if
+            the toolbar should be locked and if the last item is visible.
+             */
+            inbox_fragment_messageRv.doOnNextLayout {
+                val isLastItemVisible = rvLayoutManager.findLastCompletelyVisibleItemPosition() == rvAdapter.itemCount - 1
+                val toolbarScrollingEnabled = viewModel.shouldRequestPreventToolbarScroll(isLastItemVisible)
+                activityViewModel.requestChangeToolbarScrollState(toolbarScrollingEnabled)
+            }
         })
 
         viewModel.getRefreshing().observe(this, Observer {

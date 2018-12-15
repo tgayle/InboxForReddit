@@ -6,6 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".screens.mainactivity.MainActivity"
+        android:id="@+id/main_coordinatorlayout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,9 +19,7 @@
                 android:background="#FFFFFFFF"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                app:layout_collapseMode="pin"
-                app:layout_scrollFlags="scroll|snap"
+                app:layout_scrollFlags="scroll"
                 android:id="@+id/main_toolbar">
 
         </androidx.appcompat.widget.Toolbar>
