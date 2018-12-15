@@ -21,6 +21,9 @@ abstract class MessageDao {
         const val COUNT_USER_MESSAGES = "SELECT COUNT(*) FROM messages WHERE owner = :username"
         const val NEWEST_USER_SENT_MESSAGE = "SELECT * FROM messages WHERE owner = :username AND author = :username ORDER BY created DESC LIMIT 1"
         const val NEWEST_USER_RECEIVED_MESSAGE = "SELECT * FROM messages WHERE owner = :username AND destination = :username ORDER BY created DESC LIMIT 1"
+        const val NEWEST_USER_SENT_MESSAGE_NAME = "SELECT fullName FROM messages WHERE owner = :username AND author = :username ORDER BY created DESC LIMIT 1"
+        const val NEWEST_USER_RECEIVED_MESSAGE_NAME = "SELECT fullName FROM messages WHERE owner = :username AND destination = :username ORDER BY created DESC LIMIT 1"
+        const val OLDEST_UNREAD_USER_MESSAGE_NAME = "SELECT fullName FROM messages WHERE owner = :username AND unread = 1 ORDER BY created ASC LIMIT 1"
 
         const val ALL_USER_CONVERSATIONS_DESC = """
             SELECT *
@@ -79,7 +82,7 @@ abstract class MessageDao {
     @Query(OLDEST_UNREAD_USER_MESSAGES)
     abstract fun getOldestUnreadMessageSync(username: String): RedditMessage?
 
-    @Query("SELECT fullName FROM messages WHERE owner = :username AND unread = 1 ORDER BY created ASC LIMIT 1")
+    @Query(OLDEST_UNREAD_USER_MESSAGE_NAME)
     abstract fun getOldestUnreadMessageNameSync(username: String): String?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -100,12 +103,12 @@ abstract class MessageDao {
     @Query(NEWEST_USER_SENT_MESSAGE)
     abstract fun getNewestSentUserMessageSync(username: String): RedditMessage
 
-    @Query("SELECT fullName FROM messages WHERE owner = :username AND author = :username ORDER BY created DESC LIMIT 1")
+    @Query(NEWEST_USER_SENT_MESSAGE_NAME)
     abstract fun getNewestSentUserMessageNameSync(username: String): String
 
     @Query(NEWEST_USER_RECEIVED_MESSAGE)
     abstract fun getNewestReceivedUserMessageSync(username: String): RedditMessage
 
-    @Query("SELECT fullName FROM messages WHERE owner = :username AND destination = :username ORDER BY created DESC LIMIT 1")
+    @Query(NEWEST_USER_RECEIVED_MESSAGE_NAME)
     abstract fun getNewestReceivedUserMessageNameSync(username: String): String
 }
