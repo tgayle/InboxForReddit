@@ -77,7 +77,10 @@ abstract class MessageDao {
     abstract fun getUnreadMessagesSync(username: String): List<RedditMessage>
 
     @Query(OLDEST_UNREAD_USER_MESSAGES)
-    abstract fun getOldestUnreadMessageSync(username: String): RedditMessage
+    abstract fun getOldestUnreadMessageSync(username: String): RedditMessage?
+
+    @Query("SELECT fullName FROM messages WHERE owner = :username AND unread = 1 ORDER BY created ASC LIMIT 1")
+    abstract fun getOldestUnreadMessageNameSync(username: String): String?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     protected abstract fun insert(messages: List<RedditMessage>): List<Long>
@@ -97,6 +100,12 @@ abstract class MessageDao {
     @Query(NEWEST_USER_SENT_MESSAGE)
     abstract fun getNewestSentUserMessageSync(username: String): RedditMessage
 
+    @Query("SELECT fullName FROM messages WHERE owner = :username AND author = :username ORDER BY created DESC LIMIT 1")
+    abstract fun getNewestSentUserMessageNameSync(username: String): String
+
     @Query(NEWEST_USER_RECEIVED_MESSAGE)
     abstract fun getNewestReceivedUserMessageSync(username: String): RedditMessage
+
+    @Query("SELECT fullName FROM messages WHERE owner = :username AND destination = :username ORDER BY created DESC LIMIT 1")
+    abstract fun getNewestReceivedUserMessageNameSync(username: String): String
 }

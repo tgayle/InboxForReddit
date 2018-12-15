@@ -14,6 +14,7 @@ import app.tgayle.inboxforreddit.util.default
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.dean.jraw.RedditClient
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -55,7 +56,9 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
         GlobalScope.launch(Dispatchers.Main) {
             Log.d("Inbox", "Send refresh request.")
             isRefreshing.value = true
-            dataRepository.refreshMessages(user.first, user.second).await()
+            withContext(Dispatchers.Default) {
+                dataRepository.refreshMessages(user.first, user.second)
+            }
             isRefreshing.value = false
             lastRefresh = currentTime
         }
