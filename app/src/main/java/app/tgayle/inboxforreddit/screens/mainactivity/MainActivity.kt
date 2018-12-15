@@ -66,14 +66,22 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavControl
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
         destination.id.let {
             if (it == R.id.loginFragment || it == R.id.loginWebview) {
-                main_toolbar.visibility = View.GONE
-                home_bottom_bar.visibility = View.GONE
-                home_fab.hide()
+                hideWindowBarsAndFab()
             } else {
-                main_toolbar.visibility = View.VISIBLE
-                home_bottom_bar.visibility = View.VISIBLE
-                home_fab.show()
+                showWindowBarsAndFab()
             }
         }
+    }
+
+    private fun hideWindowBarsAndFab() {
+        main_toolbar.visibility = View.GONE
+        home_bottom_bar.visibility = View.GONE
+        home_fab.hide()
+    }
+
+    private fun showWindowBarsAndFab() {
+        main_toolbar.visibility = View.VISIBLE
+        home_bottom_bar.visibility = View.VISIBLE
+        home_fab.show()
     }
 }
