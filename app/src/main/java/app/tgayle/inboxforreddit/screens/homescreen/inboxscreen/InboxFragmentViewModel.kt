@@ -81,4 +81,8 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
         }
         return false
     }
+
+    fun shouldRequestPreventToolbarScroll(lastItemVisible: Boolean): Boolean {
+        return !lastItemVisible
+    }
 }

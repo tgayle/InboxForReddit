@@ -3,6 +3,7 @@ package app.tgayle.inboxforreddit.screens.mainactivity
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
@@ -12,6 +13,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
+import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavController.OnDestinationChangedListener {
@@ -33,9 +35,33 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavControl
         viewModel.getCurrentToolbarText().observe(this, Observer {
             main_toolbar.title = it
         })
+
+        viewModel.getToolbarScrollEnabled().observe(this, Observer { enabled ->
+            if (enabled) enableToolbarScrolling() else preventToolbarScrolling()
+        })
     }
 
     private fun appBarConfiguration() = AppBarConfiguration.Builder(R.id.homeFragment).build()
+
+    private fun preventToolbarScrolling() {
+        val toolbarLayoutParams = main_toolbar.layoutParams as AppBarLayout.LayoutParams
+        toolbarLayoutParams.scrollFlags = 0
+        main_toolbar.layoutParams = toolbarLayoutParams
+
+        val appbarLayoutParams = main_appbarlayout.layoutParams as CoordinatorLayout.LayoutParams
+        appbarLayoutParams.behavior = null
+        main_appbarlayout.layoutParams = appbarLayoutParams
+    }
+
+    private fun enableToolbarScrolling() {
+        val toolbarLayoutParams = main_toolbar.layoutParams as AppBarLayout.LayoutParams
+        toolbarLayoutParams.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL.or(AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP)
+        main_toolbar.layoutParams = toolbarLayoutParams
+
+        val appbarLayoutParams = main_appbarlayout.layoutParams as CoordinatorLayout.LayoutParams
+        appbarLayoutParams.behavior = AppBarLayout.Behavior()
+        main_appbarlayout.layoutParams = appbarLayoutParams
+    }
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
         destination.id.let {

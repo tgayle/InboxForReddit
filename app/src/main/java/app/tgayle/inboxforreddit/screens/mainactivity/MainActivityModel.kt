@@ -11,4 +11,5 @@ interface MainActivityModel {
     fun onIntentOccurred(intent: Intent)
     fun onRedditClientUpdated(client: Pair<RedditClient, RedditAccount>)
     fun requestToolbarTitleChange(title: String?)
+    fun requestChangeToolbarScrollState(enabled: Boolean)
 }

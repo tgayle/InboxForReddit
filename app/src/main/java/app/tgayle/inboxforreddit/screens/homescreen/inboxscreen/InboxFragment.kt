@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.inbox_fragment.*
 class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, PopupMenu.OnMenuItemClickListener {
     private lateinit var viewModel: InboxFragmentViewModel
     private lateinit var rvAdapter: MessageRecyclerViewAdapter
+    private lateinit var rvLayoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders
@@ -27,9 +28,13 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
         val view =  inflater.inflate(R.layout.inbox_fragment, container, false)
         setHasOptionsMenu(true)
         rvAdapter = MessageRecyclerViewAdapter()
+        rvLayoutManager = LinearLayoutManager(context)
 
         viewModel.getInboxFromClientAndAccount(activityViewModel.getRedditClient()).observe(this, Observer {
             rvAdapter.resetItems(it)
+            val isLastItemVisible = rvLayoutManager.findLastCompletelyVisibleItemPosition() == rvAdapter.itemCount - 1
+            val toolbarScrollingEnabled = viewModel.shouldRequestPreventToolbarScroll(isLastItemVisible)
+            activityViewModel.requestChangeToolbarScrollState(toolbarScrollingEnabled)
         })
 
         viewModel.getRefreshing().observe(this, Observer {
@@ -47,7 +52,7 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
         super.onActivityCreated(savedInstanceState)
         inbox_fragment_refresh.setOnRefreshListener { onRefresh() }
         inbox_fragment_messageRv.adapter = rvAdapter
-        inbox_fragment_messageRv.layoutManager = LinearLayoutManager(context)
+        inbox_fragment_messageRv.layoutManager = rvLayoutManager
     }
 
     override fun onResume() {
