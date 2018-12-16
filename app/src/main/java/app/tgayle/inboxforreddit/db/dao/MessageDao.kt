@@ -123,6 +123,6 @@ abstract class MessageDao {
     @Query(NEWEST_USER_RECEIVED_MESSAGE_NAME)
     abstract fun getNewestReceivedUserMessageNameSync(username: String): String
 
-    @Query("SELECT name as 'username', SUM(unread = 1) as 'numUnreadMessages' FROM accounts JOIN messages ON owner = name")
+    @Query("SELECT owner username, SUM(unread = 1) numUnreadMessages FROM messages GROUP BY owner")
     abstract fun getUsernamesAndUnreadMessageCountsForEach(): LiveData<List<RedditUsernameAndUnreadMessageCount>>
 }

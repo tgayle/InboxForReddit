@@ -27,7 +27,7 @@ class MainActivityViewModel(val dataRepository: DataRepository): ViewModel(), Ma
 
     override fun onRedditClientUpdated(client: Pair<RedditClient, RedditAccount>) {
         Log.d("MainActivityVM", "Client set to $client")
-        redditClient.value = client
+        redditClient.postValue(client)
     }
 
     fun getRedditClient(): LiveData<Pair<RedditClient, RedditAccount>> = redditClient
