@@ -14,6 +14,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
+import app.tgayle.inboxforreddit.screens.loginscreen.LoginScreenFragmentArgs
+import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel.MainActivityAction.NAVIGATE_LOGIN
 import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragment
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.activity_main.*
@@ -44,6 +46,16 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavControl
         })
 
         main_toolbar.setupWithNavController(navController, appBarConfiguration())
+
+        viewModel.getNavigationDecision().observe(this, Observer {
+            if (it == null) return@Observer
+            when (it) {
+                NAVIGATE_LOGIN -> {
+                    navController.navigate(R.id.loginFragment, LoginScreenFragmentArgs.Builder().setPopBackStackAfterLogin(true).build().toBundle())
+                }
+            }
+            viewModel.onNavigationAcknowledged()
+        })
 
     }
 

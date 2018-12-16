@@ -12,4 +12,6 @@ interface MainActivityModel {
     fun onRedditClientUpdated(client: Pair<RedditClient, RedditAccount>)
     fun requestToolbarTitleChange(title: String?)
     fun requestChangeToolbarScrollState(enabled: Boolean)
+    fun requestAccountSwitch(username: String?)
+    fun requestNavigateAddAccount()
 }

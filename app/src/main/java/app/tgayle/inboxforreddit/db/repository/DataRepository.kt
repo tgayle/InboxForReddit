@@ -32,7 +32,7 @@ class DataRepository(private val appDatabase: AppDatabase,
             val account = user.me().query().account
             if (account != null) {
                 appDatabase.accounts().saveUser(RedditAccount(account.uniqueId, account.name, account.created, user.authManager.refreshToken!!))
-                return@async appDatabase.accounts().getUserSync(account.name)
+                return@async appDatabase.accounts().getUserSync(account.name)!!
             } else {
                 throw RuntimeException("Tried to save a user but account was null: ${user.requireAuthenticatedUser()}")
             }
@@ -185,4 +185,5 @@ class DataRepository(private val appDatabase: AppDatabase,
     }
 
     fun getUsersAndUnreadMessageCountForEach() = appDatabase.messages().getUsernamesAndUnreadMessageCountsForEach()
+    fun getUserSync(username: String): RedditAccount? = appDatabase.accounts().getUserSync(username)
 }

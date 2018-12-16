@@ -11,6 +11,8 @@ import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
+import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragmentViewModel.BottomNavigationDrawerAction.NOTIFY_MAIN_ACTIVITY_FOR_ACCOUNT_SWITCH
+import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragmentViewModel.BottomNavigationDrawerAction.NOTIFY_MAIN_ACTIVITY_FOR_ADD_ACCOUNT
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.main_bottom_nav_drawer.*
 
@@ -37,6 +39,21 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
             usersAdapter.submitItems(it)
         })
 
+        viewModel.getActionDispatch().observe(this, Observer {
+            if (it == null) return@Observer
+
+            when (it.first) {
+                NOTIFY_MAIN_ACTIVITY_FOR_ACCOUNT_SWITCH -> {
+                    activityVm.requestAccountSwitch(it.second)
+                }
+                NOTIFY_MAIN_ACTIVITY_FOR_ADD_ACCOUNT -> {
+                    activityVm.requestNavigateAddAccount()
+                }
+            }
+            dismiss()
+            viewModel.onActionDispatchAcknowledged()
+        })
+
         return view
     }
 
@@ -44,6 +61,10 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
         super.onActivityCreated(savedInstanceState)
         bottom_nav_users_list.adapter = usersAdapter
         bottom_nav_users_list.layoutManager = LinearLayoutManager(context)
+        usersAdapter.setOnClickListener { position, totalSize, user ->
+            viewModel.onUserListClick(position, totalSize, user)
+        }
+
         main_bottom_navigation_view.setNavigationItemSelectedListener {
             return@setNavigationItemSelectedListener false
         }

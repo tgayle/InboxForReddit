@@ -1,5 +1,6 @@
 package app.tgayle.inboxforreddit.screens.loginscreen
 
+import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -31,7 +32,10 @@ class LoginFragmentViewModel(val dataRepository: DataRepository): ViewModel(), L
                 navigationDecisionMutable.value = LoginFragmentNavigation.HOME
             }
         }
+    }
 
+    override fun shouldPopBackStackOnFinish(bundleArgs: Bundle?): Boolean {
+        return bundleArgs?.getBoolean("popBackStackAfterLogin") ?: false
     }
 
     fun attemptLogin(link: String): Deferred<RedditClient> {

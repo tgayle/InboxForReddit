@@ -47,7 +47,13 @@ class LoginScreenFragment : Fragment(), LoginScreenModel.Listener {
         viewModel.getNavigationDecision().observe(this, Observer {
             when (it) {
                 null -> Log.d("Login", "Nav decision currently null.")
-                LoginFragmentViewModel.LoginFragmentNavigation.HOME -> findNavController().navigate(R.id.homeFragment)
+                LoginFragmentViewModel.LoginFragmentNavigation.HOME -> {
+                    if (viewModel.shouldPopBackStackOnFinish(arguments)) {
+                        findNavController().popBackStack(R.id.homeFragment, true)
+                    } else {
+                        findNavController().navigate(R.id.homeFragment)
+                    }
+                }
                 LoginFragmentViewModel.LoginFragmentNavigation.LOGIN -> {}
                 LoginFragmentViewModel.LoginFragmentNavigation.LOADING -> {
                     loginWebview.visibility = View.GONE

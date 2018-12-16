@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
+        android:id="@+id/user_list_item_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:paddingTop="8dp"
         android:paddingStart="16dp"

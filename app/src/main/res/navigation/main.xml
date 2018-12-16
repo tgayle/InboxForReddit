@@ -19,9 +19,21 @@
               android:label="Home" tools:layout="@layout/fragment_home">
         <action android:id="@+id/action_homeFragment_to_home_screen_navigation"
                 app:destination="@id/home_screen_navigation"/>
+        <action
+                android:id="@+id/action_homeFragment_to_loginFragment2"
+                app:destination="@id/loginFragment"/>
     </fragment>
     <fragment android:id="@+id/loginFragment"
               android:name="app.tgayle.inboxforreddit.screens.loginscreen.LoginScreenFragment"
-              android:label="Login" tools:layout="@layout/fragment_login"/>
+              android:label="Login" tools:layout="@layout/fragment_login">
+        <action
+                android:id="@+id/action_loginFragment_to_homeFragment"
+                app:destination="@id/homeFragment"
+                app:popUpTo="@+id/homeFragment"/>
+        <argument
+                android:name="popBackStackAfterLogin"
+                app:argType="boolean"
+                android:defaultValue="false"/>
+    </fragment>
     <include app:graph="@navigation/home_screen_navigation"/>
 </navigation>

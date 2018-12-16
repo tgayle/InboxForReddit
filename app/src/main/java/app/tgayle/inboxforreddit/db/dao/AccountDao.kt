@@ -13,7 +13,7 @@ interface AccountDao {
     fun getAllSync(): List<RedditAccount>
 
     @Query("SELECT * FROM accounts WHERE name = :name")
-    fun getUserSync(name: String): RedditAccount
+    fun getUserSync(name: String): RedditAccount?
 
     @Query("UPDATE accounts SET refreshToken = :refreshToken WHERE name = :username")
     fun updateUserAuthData(username: String, refreshToken: String?)

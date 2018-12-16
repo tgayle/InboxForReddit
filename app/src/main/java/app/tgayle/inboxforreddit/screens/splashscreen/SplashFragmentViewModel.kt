@@ -29,7 +29,12 @@ class SplashFragmentViewModel(val dataRepository: DataRepository): ViewModel(), 
                 Log.d("Splash", "Navigating to Login")
                 navigationDecision.value = R.id.action_splashFragment_to_loginFragment
             } else {
-                locatedRedditAccount.value = dataRepository.getClientFromUser(users[0]).await()
+                val userData = dataRepository.getClientFromUser(users[0]).await()
+                locatedRedditAccount.value = if (userData.second != null) {
+                     Pair(userData.first, userData.second!!)
+                } else {
+                    null
+                }
                 viewModelDispatch.value = SplashScreenAction.UPDATE_ACTIVITY_VM_WITH_REDDIT
                 Log.d("Splash", "Navigating to Home")
 
