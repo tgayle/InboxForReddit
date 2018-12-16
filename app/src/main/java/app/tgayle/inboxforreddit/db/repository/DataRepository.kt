@@ -183,4 +183,6 @@ class DataRepository(private val appDatabase: AppDatabase,
             return@switchMap LivePagedListBuilder<Int, RedditMessage>(sourceDataSource, 15).build()
         }
     }
+
+    fun getUsersAndUnreadMessageCountForEach() = appDatabase.messages().getUsernamesAndUnreadMessageCountsForEach()
 }

@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import app.tgayle.inboxforreddit.model.RedditMessage
+import app.tgayle.inboxforreddit.model.RedditUsernameAndUnreadMessageCount
 
 @Dao
 abstract class MessageDao {
@@ -121,4 +122,7 @@ abstract class MessageDao {
 
     @Query(NEWEST_USER_RECEIVED_MESSAGE_NAME)
     abstract fun getNewestReceivedUserMessageNameSync(username: String): String
+
+    @Query("SELECT name as 'username', SUM(unread = 1) as 'numUnreadMessages' FROM accounts JOIN messages ON owner = name")
+    abstract fun getUsernamesAndUnreadMessageCountsForEach(): LiveData<List<RedditUsernameAndUnreadMessageCount>>
 }

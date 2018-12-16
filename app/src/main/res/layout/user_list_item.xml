@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:paddingTop="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:layout_height="52dp">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Username"
+            android:textColor="@color/defaultTextColor"
+            android:id="@+id/user_list_item_username"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="18sp"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="none"
+            android:textColor="@color/defaultTextColor"
+            android:textSize="16sp"
+            android:id="@+id/user_list_item_unread_count"
+            android:layout_marginStart="4dp"
+            android:alpha="0.5"
+            app:layout_constraintStart_toEndOf="@id/user_list_item_username"
+            app:layout_constraintBaseline_toBaselineOf="@id/user_list_item_username"
+            />
+
+    <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:contentDescription="Remove account"
+            android:id="@+id/user_list_item_remove_account"
+            app:srcCompat="@drawable/icon_delete"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:tint="#000"/>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:paddingBottom="8dp"
+            android:alpha="0.33"
+            android:background="#000"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
