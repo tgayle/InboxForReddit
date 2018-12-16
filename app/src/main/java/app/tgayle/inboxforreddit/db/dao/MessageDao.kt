@@ -1,6 +1,7 @@
 package app.tgayle.inboxforreddit.db.dao
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -70,11 +71,17 @@ abstract class MessageDao {
     @Query(ALL_USER_SENT_MESSAGES)
     abstract fun getUserSentMessagesDesc(username: String): LiveData<List<RedditMessage>>
 
+    @Query(ALL_USER_SENT_MESSAGES)
+    abstract fun getUserSentMessagesDescDataSource(username: String): DataSource.Factory<Int, RedditMessage>
+
     @Query(ALL_UNREAD_USER_MESSAGES_DESC)
     abstract fun getUnreadMessagesDesc(username: String): LiveData<List<RedditMessage>>
 
     @Query(ALL_CONVERSATIONS_WITH_UNREAD_MESSAGES)
     abstract fun getConversationsWithUnreadMessages(username: String): LiveData<List<RedditMessage>>
+
+    @Query(ALL_CONVERSATIONS_WITH_UNREAD_MESSAGES)
+    abstract fun getConversationsWithUnreadMessagesDataSource(username: String): DataSource.Factory<Int, RedditMessage>
 
     @Query(ALL_UNREAD_USER_MESSAGES)
     abstract fun getUnreadMessagesSync(username: String): List<RedditMessage>
@@ -96,6 +103,9 @@ abstract class MessageDao {
 
     @Query(ALL_USER_CONVERSATIONS_DESC)
     abstract fun getConversationPreviews(username: String): LiveData<List<RedditMessage>>
+
+    @Query(ALL_USER_CONVERSATIONS_DESC)
+    abstract fun getConversationPreviewDataSource(username: String): DataSource.Factory<Int, RedditMessage>
 
     @Query(COUNT_USER_MESSAGES)
     abstract fun getUserMessageCount(username: String): Int

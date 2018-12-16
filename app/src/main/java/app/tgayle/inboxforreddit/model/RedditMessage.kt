@@ -21,20 +21,20 @@ import java.util.*
  * @property distinguished A [DistinguishedState] representing the "importance" of the previewMessage, such as if it's sent by an admin.
  */
 @Entity(tableName = "messages")
-open class RedditMessage(
-    open val uuid: UUID,
+data class RedditMessage(
+    val uuid: UUID,
     @ForeignKey(entity = RedditAccount::class, parentColumns = ["name"], childColumns = ["owner"])
-    open val owner: String,
-    open val author: String,
-    open val destination: String,
-    open val unread: Boolean,
+    val owner: String,
+    val author: String,
+    val destination: String,
+    val unread: Boolean,
     @PrimaryKey
-    open val fullName: String,
-    open val parentName: String,
-    open val created: Date,
-    open val subject: String,
-    open val body: String,
-    open val distinguished: DistinguishedState) {
+    val fullName: String,
+    val parentName: String,
+    val created: Date,
+    val subject: String,
+    val body: String,
+    val distinguished: DistinguishedState) {
 
     constructor(uuid: UUID,
                 owner: String,
@@ -49,7 +49,21 @@ open class RedditMessage(
                 jrawDistinguished: DistinguishedStatus): this(uuid, owner, author, destination, unread, fullName, parentName, created, subject, body, DistinguishedState.resolveFrom(jrawDistinguished))
 
     @Ignore
-    open val correspondent: String = if (owner == author) destination else author
+    val correspondent: String = if (owner == author) destination else author
+
+    /**
+     * Compares equality of two RedditMessages. No need to check every single property though as things such as body and
+     * created can never chance.
+     */
+    override fun equals(other: Any?): Boolean {
+        return if (other != null && other is RedditMessage) {
+            return this.unread == other.unread &&
+                    this.fullName == other.fullName &&
+                    this.parentName == other.parentName &&
+                    this.author == other.author &&
+                    this.destination == other.destination
+        } else false
+    }
 
     enum class DistinguishedState {
         NORMAL,

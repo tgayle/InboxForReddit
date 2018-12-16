@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import androidx.paging.PagedList
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.db.repository.DataRepository
 import app.tgayle.inboxforreddit.model.MessageFilterOption
@@ -30,9 +31,9 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
     fun getUserMessages(user: LiveData<Pair<RedditClient, RedditAccount>>) = dataRepository.getMessages(user)
     fun getRefreshing(): LiveData<Boolean> = isRefreshing
 
-    fun getInboxFromClientAndAccount(user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<List<RedditMessage>> {
+    fun getInboxFromClientAndAccount(user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<PagedList<RedditMessage>> {
         return Transformations.switchMap(currentMessageFilter) {
-            dataRepository.getMessagesFromClientAndAccount(it, user)
+            dataRepository.getMessagesFromClientAndAccountPaging(it, user)
         }
     }
 

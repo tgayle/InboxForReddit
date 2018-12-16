@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.homescreen.BaseHomeScreenFragment
-import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.view.MessageRecyclerViewAdapter
+import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.view.PagedMessageAdapter
 import kotlinx.android.synthetic.main.inbox_fragment.*
 
 class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, PopupMenu.OnMenuItemClickListener {
     private lateinit var viewModel: InboxFragmentViewModel
-    private lateinit var rvAdapter: MessageRecyclerViewAdapter
+    private lateinit var rvAdapter: PagedMessageAdapter
     private lateinit var rvLayoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,11 +28,11 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view =  inflater.inflate(R.layout.inbox_fragment, container, false)
         setHasOptionsMenu(true)
-        rvAdapter = MessageRecyclerViewAdapter()
+        rvAdapter = PagedMessageAdapter()
         rvLayoutManager = LinearLayoutManager(context)
 
         viewModel.getInboxFromClientAndAccount(activityViewModel.getRedditClient()).observe(this, Observer {
-            rvAdapter.resetItems(it)
+            rvAdapter.submitList(it)
             /*
             Use doOnNextLayout to make sure items have finished being laid out in the view so we can accurately decide if
             the toolbar should be locked and if the last item is visible.

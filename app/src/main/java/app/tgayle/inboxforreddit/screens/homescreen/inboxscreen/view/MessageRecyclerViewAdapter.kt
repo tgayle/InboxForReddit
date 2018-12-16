@@ -20,7 +20,7 @@ class MessageRecyclerViewAdapter(private var items: List<RedditMessage> = arrayL
     override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        holder.bind(position, itemCount, items[position])
+        holder.bind(items[position])
     }
 
     fun resetItems(newItems: List<RedditMessage>) {
@@ -36,7 +36,12 @@ class MessageRecyclerViewAdapter(private var items: List<RedditMessage> = arrayL
         private val subjectView = itemView.findViewById<TextView>(R.id.message_rv_item_subject)
         private val sentReceivedImageView = itemView.findViewById<ImageView>(R.id.message_rv_item_sentreceived)
 
-        fun bind(position: Int, totalItems: Int, redditMessage: RedditMessage) {
+        fun bind(redditMessage: RedditMessage?) {
+            if (redditMessage == null) {
+                reset()
+                return
+            }
+
             redditMessage.run {
                 authorView.text = correspondent
                 dateView.text = SimpleDateFormat.getDateInstance().format(created)
@@ -63,6 +68,14 @@ class MessageRecyclerViewAdapter(private var items: List<RedditMessage> = arrayL
                     sentReceivedImageView.setColorFilter(null)
                 }
             }
+        }
+
+        fun reset() {
+            authorView.text = null
+            dateView.text = null
+            messageView.text = null
+            subjectView.text = null
+            sentReceivedImageView.rotation = 0F
         }
     }
 }

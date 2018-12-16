@@ -3,6 +3,8 @@ package app.tgayle.inboxforreddit.db.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import app.tgayle.inboxforreddit.db.AppDatabase
 import app.tgayle.inboxforreddit.model.MessageFilterOption
 import app.tgayle.inboxforreddit.model.RedditAccount
@@ -166,4 +168,19 @@ class DataRepository(private val appDatabase: AppDatabase,
         }
     }
 
+    fun getMessagesFromClientAndAccountPaging(filterOption: MessageFilterOption?, user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<PagedList<RedditMessage>> {
+        return Transformations.switchMap(user) {
+            val username = it.second.name
+            val sourceDataSource = when (filterOption) {
+                MessageFilterOption.INBOX -> appDatabase.messages().getConversationPreviewDataSource(username)
+                MessageFilterOption.SENT -> appDatabase.messages().getUserSentMessagesDescDataSource(username)
+                MessageFilterOption.UNREAD -> appDatabase.messages().getConversationsWithUnreadMessagesDataSource(username)
+                else -> {
+                    appDatabase.messages().getConversationPreviewDataSource(username)
+                }
+            }
+
+            return@switchMap LivePagedListBuilder<Int, RedditMessage>(sourceDataSource, 15).build()
+        }
+    }
 }
