@@ -2,8 +2,8 @@ package app.tgayle.inboxforreddit.screens.homescreen.inboxscreen
 
 import androidx.lifecycle.LiveData
 import app.tgayle.inboxforreddit.model.RedditAccount
+import app.tgayle.inboxforreddit.model.RedditClientAccountPair
 import app.tgayle.inboxforreddit.model.RedditMessage
-import net.dean.jraw.RedditClient
 
 interface InboxScreenModel {
     interface Listener {
@@ -11,6 +11,6 @@ interface InboxScreenModel {
     }
 
     fun getInbox(user: LiveData<RedditAccount>): LiveData<List<RedditMessage>>?
-    fun onRefresh(user: Pair<RedditClient, RedditAccount>?, wasUserInteractionInvolved: Boolean = false)
     fun onFilterSelection(item: Int?): Boolean
+    fun onRefresh(user: RedditClientAccountPair?, wasUserInteractionInvolved: Boolean)
 }

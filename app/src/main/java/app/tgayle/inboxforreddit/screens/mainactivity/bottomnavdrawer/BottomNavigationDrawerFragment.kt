@@ -11,7 +11,7 @@ import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
-import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragmentViewModel.BottomNavigationDrawerAction.NOTIFY_MAIN_ACTIVITY_FOR_ACCOUNT_SWITCH
+import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragmentViewModel.BottomNavigationDrawerAction.DISMISS
 import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragmentViewModel.BottomNavigationDrawerAction.NOTIFY_MAIN_ACTIVITY_FOR_ADD_ACCOUNT
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.main_bottom_nav_drawer.*
@@ -31,8 +31,8 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.main_bottom_nav_drawer, container, false)
 
-        activityVm.getRedditClient().observe(this, Observer {
-            bottom_nav_username.text = it.second.name
+        viewModel.getCurrentUser().observe(this, Observer {
+            bottom_nav_username.text = it.account?.name
         })
 
         viewModel.getUsersList().observe(this, Observer {
@@ -42,13 +42,11 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
         viewModel.getActionDispatch().observe(this, Observer {
             if (it == null) return@Observer
 
-            when (it.first) {
-                NOTIFY_MAIN_ACTIVITY_FOR_ACCOUNT_SWITCH -> {
-                    activityVm.requestAccountSwitch(it.second)
-                }
+            when (it) {
                 NOTIFY_MAIN_ACTIVITY_FOR_ADD_ACCOUNT -> {
                     activityVm.requestNavigateAddAccount()
                 }
+                DISMISS -> {}
             }
             dismiss()
             viewModel.onActionDispatchAcknowledged()

@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
-import app.tgayle.inboxforreddit.screens.loginscreen.LoginFragmentViewModel.FragmentActions.ALERT_MAIN_VM_WITH_REDDIT
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -42,7 +41,6 @@ class LoginScreenFragment : Fragment(), LoginScreenModel.Listener {
         setLoginWebviewListener(webView)
         clearWebViewHistory(webView)
         goToLoginTab(webView)
-        observeActionDispatch()
         listenForNavigation()
         return view
     }
@@ -67,14 +65,6 @@ class LoginScreenFragment : Fragment(), LoginScreenModel.Listener {
                 viewModel.onLoginOccurred(url!!)
             }
         }
-    }
-
-    override fun observeActionDispatch() {
-        viewModel.getActionDispatch().observe(this, Observer {actions ->
-            when (actions) {
-                ALERT_MAIN_VM_WITH_REDDIT -> activityViewModel.onRedditClientUpdated(viewModel.getRedditClient().value!!)
-            }
-        })
     }
 
     override fun goToLoginTab(webView: WebView) {

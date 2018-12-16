@@ -31,7 +31,7 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
         rvAdapter = PagedMessageAdapter()
         rvLayoutManager = LinearLayoutManager(context)
 
-        viewModel.getInboxFromClientAndAccount(activityViewModel.getRedditClient()).observe(this, Observer {
+        viewModel.getInboxFromClientAndAccount(viewModel.currentUser).observe(this, Observer {
             rvAdapter.submitList(it)
             /*
             Use doOnNextLayout to make sure items have finished being laid out in the view so we can accurately decide if
@@ -63,12 +63,12 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
     }
 
     override fun onResume() {
-        viewModel.onRefresh(activityViewModel.getRedditClient().value, false)
+        viewModel.onRefresh(viewModel.currentUser.value, false)
         super.onResume()
     }
 
     override fun onRefresh() {
-        viewModel.onRefresh(activityViewModel.getRedditClient().value, true)
+        viewModel.onRefresh(viewModel.currentUser.value, true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

@@ -10,7 +10,7 @@ import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFacto
 /**
  * A base Fragment to be implemented by any child fragments that appear in [HomeFragment]
  */
-abstract class BaseHomeScreenFragment(): Fragment() {
+abstract class BaseHomeScreenFragment: Fragment() {
     protected lateinit var activityViewModel: MainActivityViewModel
     protected lateinit var parentViewModel: HomeFragmentViewModel
 

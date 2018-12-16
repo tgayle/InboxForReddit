@@ -2,12 +2,14 @@ package app.tgayle.inboxforreddit.db.repository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import app.tgayle.inboxforreddit.db.AppDatabase
 import app.tgayle.inboxforreddit.model.MessageFilterOption
 import app.tgayle.inboxforreddit.model.RedditAccount
+import app.tgayle.inboxforreddit.model.RedditClientAccountPair
 import app.tgayle.inboxforreddit.model.RedditMessage
 import app.tgayle.inboxforreddit.network.RedditApiService
 import kotlinx.coroutines.Dispatchers
@@ -24,22 +26,32 @@ class DataRepository(private val appDatabase: AppDatabase,
                      private val accountHelper: AccountHelper,
                      private val redditApiService: RedditApiService) {
 
+    private val redditClient = MutableLiveData<RedditClientAccountPair>()
+
+    fun getCurrentRedditUser(): LiveData<RedditClientAccountPair> = redditClient
+
     fun getUsers() = appDatabase.accounts().getAllUsers()
+
     fun getUsersDeferred() = GlobalScope.async(Dispatchers.IO ) {
         return@async appDatabase.accounts().getAllSync()
     }
+
     fun saveUser(user: RedditClient) = GlobalScope.async {
-            val account = user.me().query().account
-            if (account != null) {
-                appDatabase.accounts().saveUser(RedditAccount(account.uniqueId, account.name, account.created, user.authManager.refreshToken!!))
-                return@async appDatabase.accounts().getUserSync(account.name)!!
-            } else {
-                throw RuntimeException("Tried to save a user but account was null: ${user.requireAuthenticatedUser()}")
-            }
+        val account = user.me().query().account
+        if (account != null) {
+            appDatabase.accounts().saveUser(RedditAccount(account.uniqueId, account.name, account.created, user.authManager.refreshToken!!))
+            return@async appDatabase.accounts().getUserSync(account.name)!!
+        } else {
+            throw RuntimeException("Tried to save a user but account was null: ${user.requireAuthenticatedUser()}")
         }
+    }
+
+    fun updateCurrentUser(newUser: RedditClientAccountPair) {
+        redditClient.postValue(newUser)
+    }
 
     fun getClientFromUser(name: String) = GlobalScope.async {
-        Pair(accountHelper.switchToUser(name), appDatabase.accounts().getUserSync(name))
+        RedditClientAccountPair(accountHelper.switchToUser(name), appDatabase.accounts().getUserSync(name))
     }
 
     fun getClientFromUser(user: RedditAccount) = getClientFromUser(user.name)
@@ -50,16 +62,17 @@ class DataRepository(private val appDatabase: AppDatabase,
         return@async result
     }
 
-    fun getMessages(user: LiveData<Pair<RedditClient, RedditAccount>>) = Transformations.switchMap(user) {
-        appDatabase.messages().getUserMessages(it.second.name)
+    fun getMessages(user: LiveData<RedditClientAccountPair>) = Transformations.switchMap(user) {
+        appDatabase.messages().getUserMessages(it.account?.name)
     }
 
     fun getInbox(user: LiveData<RedditAccount>) = Transformations.switchMap(user) {
         appDatabase.messages().getConversationPreviews(it.name)
     }
 
-    suspend fun refreshMessages(client: RedditClient, account: RedditAccount): List<Long> {
+    suspend fun refreshMessages(client: RedditClient, account: RedditAccount?): List<Long> {
         Log.d("DataRepo", "Starting load...")
+        if (account == null) throw RuntimeException("Account was null when trying to refresh messages.")
         client.autoRenew = true
 
         val numPreexistingUserMessages = appDatabase.messages().getUserMessageCount(account.name)
@@ -148,15 +161,15 @@ class DataRepository(private val appDatabase: AppDatabase,
         .limit(limit)
         .build()
 
-    fun getInboxFromClientAndAccount(user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<List<RedditMessage>> {
+    fun getInboxFromClientAndAccount(user: LiveData<RedditClientAccountPair>): LiveData<List<RedditMessage>> {
         return Transformations.switchMap(user) {
-            appDatabase.messages().getConversationPreviews(it.second.name)
+            appDatabase.messages().getConversationPreviews(it.account?.name)
         }
     }
 
-    fun getMessagesFromClientAndAccount(filterOption: MessageFilterOption?, user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<List<RedditMessage>> {
+    fun getMessagesFromClientAndAccount(filterOption: MessageFilterOption?, user: LiveData<RedditClientAccountPair>): LiveData<List<RedditMessage>> {
         return Transformations.switchMap(user) {
-            val username = it.second.name
+            val username = it.account?.name
             when (filterOption) {
                 MessageFilterOption.INBOX -> appDatabase.messages().getConversationPreviews(username)
                 MessageFilterOption.SENT -> appDatabase.messages().getUserSentMessagesDesc(username)
@@ -168,9 +181,9 @@ class DataRepository(private val appDatabase: AppDatabase,
         }
     }
 
-    fun getMessagesFromClientAndAccountPaging(filterOption: MessageFilterOption?, user: LiveData<Pair<RedditClient, RedditAccount>>): LiveData<PagedList<RedditMessage>> {
+    fun getMessagesFromClientAndAccountPaging(filterOption: MessageFilterOption?, user: LiveData<RedditClientAccountPair>): LiveData<PagedList<RedditMessage>> {
         return Transformations.switchMap(user) {
-            val username = it.second.name
+            val username = it.account?.name
             val sourceDataSource = when (filterOption) {
                 MessageFilterOption.INBOX -> appDatabase.messages().getConversationPreviewDataSource(username)
                 MessageFilterOption.SENT -> appDatabase.messages().getUserSentMessagesDescDataSource(username)

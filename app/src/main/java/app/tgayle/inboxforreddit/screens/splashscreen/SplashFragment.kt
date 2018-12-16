@@ -14,7 +14,6 @@ import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
-import app.tgayle.inboxforreddit.screens.splashscreen.SplashFragmentViewModel.SplashScreenAction.UPDATE_ACTIVITY_VM_WITH_REDDIT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -35,7 +34,6 @@ class SplashFragment : Fragment(), SplashScreenModel.Listener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_splash, container, false)
 
-        listenForActionDispatch()
         listenForNavigation()
         return view
     }
@@ -51,19 +49,6 @@ class SplashFragment : Fragment(), SplashScreenModel.Listener {
                         it.navigate(navigationId)
                     }
                 }
-            }
-        })
-    }
-
-    override fun listenForActionDispatch() {
-        viewModel.getViewmodelDispatch().observe(this, Observer {
-            when (it) {
-                UPDATE_ACTIVITY_VM_WITH_REDDIT -> {
-                    viewModel.getLocatedRedditAccount().observe(this, Observer { clientAndAccount ->
-                        if (clientAndAccount != null) activityVm.onRedditClientUpdated(clientAndAccount);
-                    })
-                }
-                null -> TODO("Is it even possible for this to be null?")
             }
         })
     }

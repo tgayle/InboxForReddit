@@ -67,31 +67,31 @@ abstract class MessageDao {
     abstract fun getAllMessages(): LiveData<List<RedditMessage>>
 
     @Query(ALL_USER_MESSAGES)
-    abstract fun getUserMessages(username: String): LiveData<List<RedditMessage>>
+    abstract fun getUserMessages(username: String?): LiveData<List<RedditMessage>>
 
     @Query(ALL_USER_SENT_MESSAGES)
-    abstract fun getUserSentMessagesDesc(username: String): LiveData<List<RedditMessage>>
+    abstract fun getUserSentMessagesDesc(username: String?): LiveData<List<RedditMessage>>
 
     @Query(ALL_USER_SENT_MESSAGES)
-    abstract fun getUserSentMessagesDescDataSource(username: String): DataSource.Factory<Int, RedditMessage>
+    abstract fun getUserSentMessagesDescDataSource(username: String?): DataSource.Factory<Int, RedditMessage>
 
     @Query(ALL_UNREAD_USER_MESSAGES_DESC)
-    abstract fun getUnreadMessagesDesc(username: String): LiveData<List<RedditMessage>>
+    abstract fun getUnreadMessagesDesc(username: String?): LiveData<List<RedditMessage>>
 
     @Query(ALL_CONVERSATIONS_WITH_UNREAD_MESSAGES)
-    abstract fun getConversationsWithUnreadMessages(username: String): LiveData<List<RedditMessage>>
+    abstract fun getConversationsWithUnreadMessages(username: String?): LiveData<List<RedditMessage>>
 
     @Query(ALL_CONVERSATIONS_WITH_UNREAD_MESSAGES)
-    abstract fun getConversationsWithUnreadMessagesDataSource(username: String): DataSource.Factory<Int, RedditMessage>
+    abstract fun getConversationsWithUnreadMessagesDataSource(username: String?): DataSource.Factory<Int, RedditMessage>
 
     @Query(ALL_UNREAD_USER_MESSAGES)
     abstract fun getUnreadMessagesSync(username: String): List<RedditMessage>
 
     @Query(OLDEST_UNREAD_USER_MESSAGES)
-    abstract fun getOldestUnreadMessageSync(username: String): RedditMessage?
+    abstract fun getOldestUnreadMessageSync(username: String?): RedditMessage?
 
     @Query(OLDEST_UNREAD_USER_MESSAGE_NAME)
-    abstract fun getOldestUnreadMessageNameSync(username: String): String?
+    abstract fun getOldestUnreadMessageNameSync(username: String?): String?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     protected abstract fun insert(messages: List<RedditMessage>): List<Long>
@@ -103,25 +103,25 @@ abstract class MessageDao {
     protected abstract fun insertReplacingOldMessage(fullName: String, newUnread: Boolean = false): Long
 
     @Query(ALL_USER_CONVERSATIONS_DESC)
-    abstract fun getConversationPreviews(username: String): LiveData<List<RedditMessage>>
+    abstract fun getConversationPreviews(username: String?): LiveData<List<RedditMessage>>
 
     @Query(ALL_USER_CONVERSATIONS_DESC)
-    abstract fun getConversationPreviewDataSource(username: String): DataSource.Factory<Int, RedditMessage>
+    abstract fun getConversationPreviewDataSource(username: String?): DataSource.Factory<Int, RedditMessage>
 
     @Query(COUNT_USER_MESSAGES)
-    abstract fun getUserMessageCount(username: String): Int
+    abstract fun getUserMessageCount(username: String?): Int
 
     @Query(NEWEST_USER_SENT_MESSAGE)
-    abstract fun getNewestSentUserMessageSync(username: String): RedditMessage
+    abstract fun getNewestSentUserMessageSync(username: String?): RedditMessage
 
     @Query(NEWEST_USER_SENT_MESSAGE_NAME)
-    abstract fun getNewestSentUserMessageNameSync(username: String): String
+    abstract fun getNewestSentUserMessageNameSync(username: String?): String
 
     @Query(NEWEST_USER_RECEIVED_MESSAGE)
-    abstract fun getNewestReceivedUserMessageSync(username: String): RedditMessage
+    abstract fun getNewestReceivedUserMessageSync(username: String?): RedditMessage
 
     @Query(NEWEST_USER_RECEIVED_MESSAGE_NAME)
-    abstract fun getNewestReceivedUserMessageNameSync(username: String): String
+    abstract fun getNewestReceivedUserMessageNameSync(username: String?): String
 
     @Query("SELECT owner username, SUM(unread = 1) numUnreadMessages FROM messages GROUP BY owner")
     abstract fun getUsernamesAndUnreadMessageCountsForEach(): LiveData<List<RedditUsernameAndUnreadMessageCount>>
