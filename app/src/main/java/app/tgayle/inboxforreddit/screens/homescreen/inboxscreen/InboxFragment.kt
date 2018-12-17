@@ -31,6 +31,10 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
         rvAdapter = PagedMessageAdapter()
         rvLayoutManager = LinearLayoutManager(context)
 
+        viewModel.currentUser.observe(this, Observer {
+            onRefresh()
+        })
+
         viewModel.getInboxFromClientAndAccount(viewModel.currentUser).observe(this, Observer {
             rvAdapter.submitList(it)
             /*
