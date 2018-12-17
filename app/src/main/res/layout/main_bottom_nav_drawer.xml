@@ -49,6 +49,28 @@
                         app:layout_constraintTop_toBottomOf="@id/bottom_nav_account_btn"
                         app:layout_constraintStart_toStartOf="parent"
                         />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:id="@+id/add_user_list_item_root"
+                        android:paddingStart="16dp"
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        app:layout_constraintTop_toBottomOf="@id/bottom_nav_users_list"
+                        android:layout_height="52dp">
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Add account"
+                            android:textColor="@color/defaultTextColor"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:textSize="18sp"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.navigation.NavigationView

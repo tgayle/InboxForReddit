@@ -21,22 +21,23 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
     lateinit var activityVm: MainActivityViewModel
     lateinit var viewModel: BottomNavigationDrawerFragmentViewModel
     val usersAdapter by lazy { UserListAdapter() }
+    lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityVm = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(AppSingleton.dataRepository)).get(MainActivityViewModel::class.java)
         viewModel = ViewModelProviders.of(this, vmFactory).get(BottomNavigationDrawerFragmentViewModel::class.java)
+        layoutManager = LinearLayoutManager(context)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.main_bottom_nav_drawer, container, false)
-
         viewModel.getCurrentUser().observe(this, Observer {
             bottom_nav_username.text = it.account?.name
         })
 
         viewModel.getUsersList().observe(this, Observer {
-            usersAdapter.submitItems(it)
+            usersAdapter.submitList(it)
         })
 
         viewModel.getActionDispatch().observe(this, Observer {
@@ -58,10 +59,17 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         bottom_nav_users_list.adapter = usersAdapter
-        bottom_nav_users_list.layoutManager = LinearLayoutManager(context)
-        usersAdapter.setOnClickListener { position, totalSize, user ->
-            viewModel.onUserListClick(position, totalSize, user)
+        bottom_nav_users_list.layoutManager = layoutManager
+
+        add_user_list_item_root.setOnClickListener {
+            viewModel.onUserAddClick()
         }
+
+        usersAdapter.onUserClick =  {user -> viewModel.onUserListClick(user) }
+
+        usersAdapter.onUserRemoveClick = {user -> viewModel.onUserRemoveClick(user) }
+
+        usersAdapter.onUserAddClick = { viewModel.onUserAddClick() }
 
         main_bottom_navigation_view.setNavigationItemSelectedListener {
             return@setNavigationItemSelectedListener false

@@ -3,6 +3,8 @@ package app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.model.RedditUsernameAndUnreadMessageCount
@@ -10,36 +12,27 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.user_list_item.*
 
-typealias OnItemClickListener = (position: Int, totalSize: Int, user: RedditUsernameAndUnreadMessageCount?) -> Unit
+typealias OnItemClickListener = (user: RedditUsernameAndUnreadMessageCount?) -> Unit
+typealias OnAddUserClick = () -> Unit
 
-class UserListAdapter(var users: List<RedditUsernameAndUnreadMessageCount> = arrayListOf()): RecyclerView.Adapter<UserListAdapter.UserListViewHolder>() {
-    private var onUserClick: OnItemClickListener? = null
+class UserListAdapter: PagedListAdapter<RedditUsernameAndUnreadMessageCount, UserListAdapter.UserListViewHolder>(DIFF_UTIL) {
+    var onUserClick: OnItemClickListener? = null
+    var onUserRemoveClick: OnItemClickListener? = null
+    var onUserAddClick: OnAddUserClick? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserListViewHolder {
-        return UserListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.user_list_item, parent, false))
+        val inflater = LayoutInflater.from(parent.context)
+        return UserListViewHolder(inflater.inflate(R.layout.user_list_item, parent, false))
     }
-
-    override fun getItemCount() = users.size + 1
 
     override fun onBindViewHolder(holder: UserListViewHolder, position: Int) {
-        holder.bind(position, itemCount, users.getOrNull(position), onUserClick)
-    }
-
-    fun submitItems(newUsers: List<RedditUsernameAndUnreadMessageCount>) {
-        val originalSize = newUsers.size
-        notifyItemRangeRemoved(0, originalSize)
-        users = newUsers
-        notifyItemRangeInserted(0, newUsers.size)
-    }
-
-    fun setOnClickListener(block: OnItemClickListener) {
-        onUserClick = block
+         holder.bind(getItem(position), onUserClick, onUserRemoveClick)
     }
 
     class UserListViewHolder(override val containerView: View): RecyclerView.ViewHolder(containerView), LayoutContainer {
-        fun bind(position: Int, maxSize: Int, user: RedditUsernameAndUnreadMessageCount?, onUserClick: OnItemClickListener?) {
+        fun bind(user: RedditUsernameAndUnreadMessageCount?, onUserClick: OnItemClickListener?, onUserRemoveClick: OnItemClickListener?) {
             user_list_item_parent.setOnClickListener {
-                onUserClick?.invoke(position, maxSize, user)
+                onUserClick?.invoke(user)
             }
 
             user.let {
@@ -53,8 +46,22 @@ class UserListAdapter(var users: List<RedditUsernameAndUnreadMessageCount> = arr
                     user_list_item_remove_account.visibility = View.VISIBLE
                     user_list_item_remove_account.setOnClickListener {view ->
                         Snackbar.make(view, "${it.username} clicked", Snackbar.LENGTH_SHORT).show()
+                        onUserRemoveClick?.invoke(user)
                     }
                 }
+            }
+        }
+    }
+
+    companion object {
+        val DIFF_UTIL = object: DiffUtil.ItemCallback<RedditUsernameAndUnreadMessageCount?>() {
+            override fun areItemsTheSame(oldItem: RedditUsernameAndUnreadMessageCount, newItem: RedditUsernameAndUnreadMessageCount
+            ): Boolean {
+                return oldItem.username == newItem.username
+            }
+
+            override fun areContentsTheSame(oldItem: RedditUsernameAndUnreadMessageCount, newItem: RedditUsernameAndUnreadMessageCount): Boolean {
+                return oldItem.numUnreadMessages == newItem.numUnreadMessages
             }
         }
     }

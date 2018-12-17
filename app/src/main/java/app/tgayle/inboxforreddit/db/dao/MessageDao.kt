@@ -124,5 +124,8 @@ abstract class MessageDao {
     abstract fun getNewestReceivedUserMessageNameSync(username: String?): String
 
     @Query("SELECT owner username, SUM(unread = 1) numUnreadMessages FROM messages GROUP BY owner")
-    abstract fun getUsernamesAndUnreadMessageCountsForEach(): LiveData<List<RedditUsernameAndUnreadMessageCount>>
+    abstract fun getUsernamesAndUnreadMessageCountsForEach(): DataSource.Factory<Int, RedditUsernameAndUnreadMessageCount>
+
+    @Query("DELETE FROM messages WHERE owner = :username")
+    abstract fun removeMessagesWithOwner(username: String?)
 }

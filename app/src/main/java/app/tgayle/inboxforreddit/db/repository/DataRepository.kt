@@ -197,6 +197,12 @@ class DataRepository(private val appDatabase: AppDatabase,
         }
     }
 
-    fun getUsersAndUnreadMessageCountForEach() = appDatabase.messages().getUsernamesAndUnreadMessageCountsForEach()
-    fun getUserSync(username: String): RedditAccount? = appDatabase.accounts().getUserSync(username)
+    fun getUsersAndUnreadMessageCountForEach() = LivePagedListBuilder(appDatabase.messages().getUsernamesAndUnreadMessageCountsForEach(), 5).build()
+
+    fun getUserSync(username: String?): RedditAccount? = appDatabase.accounts().getUserSync(username)
+
+    fun removeUser(username: String?) = GlobalScope.async {
+        appDatabase.accounts().removeUserByName(username)
+        appDatabase.messages().removeMessagesWithOwner(username)
+    }
 }

@@ -21,6 +21,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Subject"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="@color/defaultTextColor"
                 android:id="@+id/message_rv_item_subject"
                 android:textSize="16sp"
