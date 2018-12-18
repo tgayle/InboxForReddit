@@ -205,4 +205,11 @@ class DataRepository(private val appDatabase: AppDatabase,
         appDatabase.accounts().removeUserByName(username)
         appDatabase.messages().removeMessagesWithOwner(username)
     }
+
+    fun getConversationMessages(conversationParentName: String): LiveData<PagedList<RedditMessage>> {
+        return LivePagedListBuilder(appDatabase.messages().getConversationMessages(conversationParentName), 15)
+            .build()
+    }
+
+    fun getFirstMessageOfConversation(conversationParentName: String?) = appDatabase.messages().getFirstMessageOfConversation(conversationParentName)
 }

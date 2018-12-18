@@ -6,10 +6,12 @@ import android.widget.PopupMenu
 import androidx.core.view.doOnNextLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.homescreen.BaseHomeScreenFragment
+import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.InboxFragmentViewModel.InboxFragmentAction.NAVIGATE_TO_CONVERSATION
 import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.view.PagedMessageAdapter
 import kotlinx.android.synthetic.main.inbox_fragment.*
 
@@ -30,6 +32,11 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
         setHasOptionsMenu(true)
         rvAdapter = PagedMessageAdapter()
         rvLayoutManager = LinearLayoutManager(context)
+
+
+        rvAdapter.onMessageClickListener = {
+            viewModel.onMessageClicked(it)
+        }
 
         viewModel.currentUser.observe(this, Observer {
             onRefresh()
@@ -54,6 +61,19 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
 
         viewModel.getCurrentFilterTitle().observe(this, Observer {
             activityViewModel.requestToolbarTitleChange(it)
+        })
+
+        viewModel.getActionDispatch().observe(this, Observer {
+            if (it == null) return@Observer
+
+            when (it.first) {
+                NAVIGATE_TO_CONVERSATION -> {
+                    val navigationArgs = InboxFragmentDirections.ActionInboxFragmentToConversationFragment(it.second!!.parentName)
+                    findNavController().navigate(navigationArgs)
+                }
+            }
+
+            viewModel.onActionAcknowledged()
         })
 
         return view

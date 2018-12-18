@@ -23,14 +23,16 @@ import java.util.concurrent.TimeUnit
 class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), InboxScreenModel {
     private val isRefreshing = MutableLiveData<Boolean>()
     val currentUser = dataRepository.getCurrentRedditUser()
-    private val currentMessageFilter = MutableLiveData<MessageFilterOption>().default(
-        MessageFilterOption.INBOX)
+    private val currentMessageFilter = MutableLiveData<MessageFilterOption>().default(MessageFilterOption.INBOX)
+    private val actionDispatcher = MutableLiveData<Pair<InboxFragmentAction, RedditMessage?>?>()
+
     private var lastRefresh: Date? = null
     private val timeBetweenAutomaticRefresh = TimeUnit.SECONDS.toMillis(30)
 
     override fun getInbox(user: LiveData<RedditAccount>): LiveData<List<RedditMessage>> = dataRepository.getInbox(user)
     fun getUserMessages(user: LiveData<RedditClientAccountPair>) = dataRepository.getMessages(user)
     fun getRefreshing(): LiveData<Boolean> = isRefreshing
+    fun getActionDispatch(): LiveData<Pair<InboxFragmentAction, RedditMessage?>?> = actionDispatcher
 
     fun getInboxFromClientAndAccount(user: LiveData<RedditClientAccountPair>): LiveData<PagedList<RedditMessage>> {
         return Transformations.switchMap(currentMessageFilter) {
@@ -39,6 +41,14 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
     }
 
     fun getCurrentFilterTitle() = Transformations.map(currentMessageFilter) { it.name.toLowerCase().capitalize() }
+
+    override fun onMessageClicked(message: RedditMessage) {
+        actionDispatcher.value = Pair(InboxFragmentAction.NAVIGATE_TO_CONVERSATION, message)
+    }
+
+    fun onActionAcknowledged() {
+        actionDispatcher.value = null
+    }
 
     override fun onRefresh(user: RedditClientAccountPair?, wasUserInteractionInvolved: Boolean) {
         if (user == null) return
@@ -89,5 +99,9 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
 
     fun shouldRequestPreventToolbarScroll(lastItemVisible: Boolean): Boolean {
         return !lastItemVisible
+    }
+
+    enum class InboxFragmentAction {
+        NAVIGATE_TO_CONVERSATION
     }
 }

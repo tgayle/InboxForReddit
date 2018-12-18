@@ -26,6 +26,7 @@ abstract class MessageDao {
         const val NEWEST_USER_SENT_MESSAGE_NAME = "SELECT fullName FROM messages WHERE owner = :username AND author = :username ORDER BY created DESC LIMIT 1"
         const val NEWEST_USER_RECEIVED_MESSAGE_NAME = "SELECT fullName FROM messages WHERE owner = :username AND destination = :username ORDER BY created DESC LIMIT 1"
         const val OLDEST_UNREAD_USER_MESSAGE_NAME = "SELECT fullName FROM messages WHERE owner = :username AND unread = 1 ORDER BY created ASC LIMIT 1"
+        const val DELETE_USER_MESSAGES = "DELETE FROM messages WHERE owner = :username"
 
         const val ALL_USER_CONVERSATIONS_DESC = """
             SELECT *
@@ -126,6 +127,23 @@ abstract class MessageDao {
     @Query("SELECT owner username, SUM(unread = 1) numUnreadMessages FROM messages GROUP BY owner")
     abstract fun getUsernamesAndUnreadMessageCountsForEach(): DataSource.Factory<Int, RedditUsernameAndUnreadMessageCount>
 
-    @Query("DELETE FROM messages WHERE owner = :username")
+    @Query(DELETE_USER_MESSAGES)
     abstract fun removeMessagesWithOwner(username: String?)
+
+    @Query ("""
+        SELECT *
+        FROM messages
+        WHERE parentName = :parentName
+        ORDER BY created ASC
+    """)
+    abstract fun getConversationMessages(parentName: String?): DataSource.Factory<Int, RedditMessage>
+
+    @Query("""
+        SELECT *
+        FROM messages
+        WHERE parentName = :parentName
+        ORDER BY created ASC
+        LIMIT 1
+    """)
+    abstract fun getFirstMessageOfConversation(parentName: String?): RedditMessage?
 }

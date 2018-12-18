@@ -1,5 +1,6 @@
 package app.tgayle.inboxforreddit.model
 
+import androidx.recyclerview.widget.DiffUtil
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
@@ -53,7 +54,7 @@ data class RedditMessage(
 
     /**
      * Compares equality of two RedditMessages. No need to check every single property though as things such as body and
-     * created can never chance.
+     * created can never change.
      */
     override fun equals(other: Any?): Boolean {
         return if (other != null && other is RedditMessage) {
@@ -80,6 +81,17 @@ data class RedditMessage(
                 DistinguishedStatus.SPECIAL -> SPECIAL
                 DistinguishedStatus.GOLD -> GOLD
             }
+        }
+    }
+
+    /**
+     * Base DIFF_UTIL for whenever messages should be compared.
+     */
+    companion object {
+        val DEFAULT_DIFF_UTIL = object: DiffUtil.ItemCallback<RedditMessage>() {
+            override fun areItemsTheSame(oldItem: RedditMessage, newItem: RedditMessage) = oldItem.fullName == newItem.fullName
+
+            override fun areContentsTheSame(oldItem: RedditMessage, newItem: RedditMessage) = oldItem == newItem
         }
     }
 }

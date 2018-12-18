@@ -15,7 +15,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
-                android:id="@+id/inbox_fragment_messageRv">
+                android:id="@+id/inbox_fragment_messageRv"
+                tools:listitem="@layout/message_rv_item">
         </androidx.recyclerview.widget.RecyclerView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
