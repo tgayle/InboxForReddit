@@ -4,36 +4,35 @@
             xmlns:tools="http://schemas.android.com/tools" android:id="@+id/main"
             app:startDestination="@id/splashFragment">
 
+    <fragment
+            android:id="@+id/homeFragment"
+            android:name="app.tgayle.inboxforreddit.screens.homescreen.HomeFragment"
+            android:label="Home"
+            tools:layout="@layout/fragment_home">
+        <action
+                android:id="@+id/action_homeFragment_to_home_screen_navigation"
+                app:destination="@id/home_screen_navigation"/>
+    </fragment>
     <activity android:id="@+id/mainActivity" android:name="app.tgayle.inboxforreddit.screens.mainactivity.MainActivity"
               android:label="activity_main" tools:layout="@layout/activity_main"/>
     <fragment android:id="@+id/splashFragment" android:name="app.tgayle.inboxforreddit.screens.splashscreen.SplashFragment"
               android:label="fragment_splash" tools:layout="@layout/fragment_splash">
-        <action android:id="@+id/action_splashFragment_to_homeFragment" app:destination="@id/homeFragment"
-                app:popUpToInclusive="true" app:popUpTo="@+id/splashFragment"
-                app:exitAnim="@android:anim/fade_out"
-                app:enterAnim="@android:anim/fade_in"/>
         <action android:id="@+id/action_splashFragment_to_loginFragment" app:destination="@id/loginFragment"
                 app:popUpToInclusive="true" app:popUpTo="@+id/splashFragment"/>
-    </fragment>
-    <fragment android:id="@+id/homeFragment" android:name="app.tgayle.inboxforreddit.screens.homescreen.HomeFragment"
-              android:label="Home" tools:layout="@layout/fragment_home">
-        <action android:id="@+id/action_homeFragment_to_home_screen_navigation"
-                app:destination="@id/home_screen_navigation"/>
         <action
-                android:id="@+id/action_homeFragment_to_loginFragment2"
-                app:destination="@id/loginFragment"/>
+                android:id="@+id/action_splashFragment_to_homeFragment"
+                app:destination="@id/homeFragment"/>
     </fragment>
     <fragment android:id="@+id/loginFragment"
               android:name="app.tgayle.inboxforreddit.screens.loginscreen.LoginScreenFragment"
               android:label="Login" tools:layout="@layout/fragment_login">
-        <action
-                android:id="@+id/action_loginFragment_to_homeFragment"
-                app:destination="@id/homeFragment"
-                app:popUpTo="@+id/homeFragment"/>
         <argument
                 android:name="popBackStackAfterLogin"
                 app:argType="boolean"
                 android:defaultValue="false"/>
+        <action
+                android:id="@+id/action_loginFragment_to_homeFragment"
+                app:destination="@id/homeFragment"/>
     </fragment>
     <include app:graph="@navigation/home_screen_navigation"/>
 </navigation>

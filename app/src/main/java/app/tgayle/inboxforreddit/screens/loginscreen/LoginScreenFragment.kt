@@ -49,7 +49,7 @@ class LoginScreenFragment : Fragment(), LoginScreenModel.Listener {
         viewModel.getNavigationDecision().observe(this, Observer {
             when (it) {
                 null -> Log.d("Login", "Nav decision currently null.")
-                LoginFragmentViewModel.LoginFragmentNavigation.HOME -> findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                LoginFragmentViewModel.LoginFragmentNavigation.HOME -> findNavController().navigate(LoginScreenFragmentDirections.actionLoginFragmentToHomeFragment())
                 LoginFragmentViewModel.LoginFragmentNavigation.LOGIN -> {}
                 LoginFragmentViewModel.LoginFragmentNavigation.LOADING -> {
                     loginWebview.visibility = View.GONE

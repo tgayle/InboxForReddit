@@ -33,8 +33,7 @@ class ConversationFragment : BaseHomeScreenFragment() {
 
         viewModel.conversationInfo.observe(this, Observer {
             if (it == null) return@Observer
-            view.conversation_detail_subject.text = it.subject
-            view.conversation_detail_correspondent.text = it.correspondent
+            activityViewModel.requestToolbarTitleChange(it.subject)
         })
 
         viewModel.getConversationMessages().observe(this, Observer {

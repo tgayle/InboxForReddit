@@ -59,8 +59,8 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
         if (!wasUserInteractionInvolved) {
             lastRefresh.let {
                 if (it != null) {
-                    val tenMinutesPassed = it.time + timeBetweenAutomaticRefresh < currentTime.time
-                    if (!tenMinutesPassed) return
+                    val thirtySecondsAgo = currentTime.time - timeBetweenAutomaticRefresh
+                    if (it.time > thirtySecondsAgo) return
                 }
             }
         }

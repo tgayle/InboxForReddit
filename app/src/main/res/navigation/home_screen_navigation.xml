@@ -3,26 +3,43 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools" android:id="@+id/home_screen_navigation"
             app:startDestination="@id/inboxFragment">
-
-    <fragment android:id="@+id/inboxFragment"
-              android:name="app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.InboxFragment"
-              android:label="Inbox" tools:layout="@layout/inbox_fragment">
-        <action android:id="@+id/action_inboxFragment_to_conversationFragment"
-                app:destination="@id/conversationFragment"/>
+    <fragment
+            android:id="@+id/inboxFragment"
+            android:name="app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.InboxFragment"
+            android:label="Inbox"
+            tools:layout="@layout/inbox_fragment">
+        <action
+                android:id="@+id/action_inboxFragment_to_conversationFragment"
+                app:destination="@id/conversationFragment"
+                app:popUpTo="@+id/inboxFragment"
+                app:popUpToInclusive="false"/>
         <action
                 android:id="@+id/action_inboxFragment_to_replyConversationFragment"
-                app:destination="@id/replyConversationFragment"/>
+                app:destination="@id/replyConversationFragment"
+                app:popUpTo="@+id/inboxFragment"
+                app:popUpToInclusive="false"/>
     </fragment>
-    <fragment android:id="@+id/conversationFragment"
-              android:name="app.tgayle.inboxforreddit.screens.homescreen.conversationscreen.ConversationFragment"
-              android:label="Conversation with x" tools:layout="@layout/conversation_fragment">
-        <action android:id="@+id/action_conversationFragment_to_replyConversationFragment"
-                app:destination="@id/replyConversationFragment"/>
-        <argument android:name="parentName" app:argType="string"/>
+    <fragment
+            android:id="@+id/conversationFragment"
+            android:name="app.tgayle.inboxforreddit.screens.homescreen.conversationscreen.ConversationFragment"
+            android:label="Conversation with x"
+            tools:layout="@layout/conversation_fragment">
+        <action
+                android:id="@+id/action_conversationFragment_to_replyConversationFragment"
+                app:destination="@id/replyConversationFragment"
+                app:popUpTo="@+id/conversationFragment"
+                app:popUpToInclusive="false"/>
+        <argument
+                android:name="parentName"
+                app:argType="string"/>
     </fragment>
-    <fragment android:id="@+id/replyConversationFragment"
-              android:name="app.tgayle.inboxforreddit.screens.homescreen.replyscreen.ReplyConversationFragment"
-              android:label="Reply to x" tools:layout="@layout/reply_conversation_fragment">
-        <argument android:name="parentName" app:argType="string"/>
+    <fragment
+            android:id="@+id/replyConversationFragment"
+            android:name="app.tgayle.inboxforreddit.screens.homescreen.replyscreen.ReplyConversationFragment"
+            android:label="Reply to x"
+            tools:layout="@layout/reply_conversation_fragment">
+        <argument
+                android:name="parentName"
+                app:argType="string"/>
     </fragment>
 </navigation>

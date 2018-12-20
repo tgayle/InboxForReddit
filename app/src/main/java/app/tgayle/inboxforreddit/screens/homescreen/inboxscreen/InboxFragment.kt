@@ -39,7 +39,7 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
         }
 
         viewModel.currentUser.observe(this, Observer {
-            onRefresh()
+            viewModel.onRefresh(viewModel.currentUser.value, false)
         })
 
         viewModel.getInboxFromClientAndAccount(viewModel.currentUser).observe(this, Observer {
@@ -84,11 +84,6 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
         inbox_fragment_refresh.setOnRefreshListener { onRefresh() }
         inbox_fragment_messageRv.adapter = rvAdapter
         inbox_fragment_messageRv.layoutManager = rvLayoutManager
-    }
-
-    override fun onResume() {
-        viewModel.onRefresh(viewModel.currentUser.value, false)
-        super.onResume()
     }
 
     override fun onRefresh() {
