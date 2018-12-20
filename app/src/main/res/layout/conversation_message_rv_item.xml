@@ -6,7 +6,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +43,9 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:paddingTop="4dp"
-                app:layout_constraintBottom_toBottomOf="@id/conversation_message_item_correspondent"/>
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/conversation_message_item_date"
+                />
 
         <TextView
                 android:layout_width="match_parent"
@@ -52,7 +54,10 @@
                 android:text="@string/loremipsum"
                 android:textColor="@color/defaultTextColor"
                 android:id="@+id/conversation_message_item_body"
-                app:layout_constraintTop_toBottomOf="@id/conversation_message_item_date"/>
+                app:layout_constraintTop_toBottomOf="@id/conversation_message_item_date"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <View
