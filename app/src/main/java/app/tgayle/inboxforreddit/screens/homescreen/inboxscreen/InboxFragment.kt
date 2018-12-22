@@ -52,10 +52,15 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
             Use doOnNextLayout to make sure items have finished being laid out in the view so we can accurately decide if
             the toolbar should be locked and if the last item is visible.
              */
-            inbox_fragment_messageRv.doOnNextLayout {
+            inbox_fragment_messageRv.doOnNextLayout {view ->
                 val isLastItemVisible = rvLayoutManager.findLastCompletelyVisibleItemPosition() == rvAdapter.itemCount - 1
                 val toolbarScrollingEnabled = viewModel.shouldRequestPreventToolbarScroll(isLastItemVisible)
                 activityViewModel.requestChangeToolbarScrollState(toolbarScrollingEnabled)
+                viewModel.inboxViewState.run {
+                    view.post {
+                        rvLayoutManager.scrollToPositionWithOffset(firstVisibleMessagePosition, viewOffset)
+                    }
+                }
             }
         })
 
@@ -108,5 +113,12 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         return viewModel.onFilterSelection(item?.itemId)
+    }
+
+    override fun onStop() {
+        val firstVisibleMessagePosition = rvLayoutManager.findFirstVisibleItemPosition()
+        val itemTop = rvLayoutManager.findViewByPosition(firstVisibleMessagePosition)?.top ?: 0
+        viewModel.onFragmentStop(InboxScreenModel.FragmentStateArgs(firstVisibleMessagePosition, itemTop))
+        super.onStop()
     }
 }

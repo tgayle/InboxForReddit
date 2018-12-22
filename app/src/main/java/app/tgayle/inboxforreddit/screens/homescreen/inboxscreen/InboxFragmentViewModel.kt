@@ -21,8 +21,11 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), InboxScreenModel {
-    private val isRefreshing = MutableLiveData<Boolean>()
+    var inboxViewState: InboxScreenModel.FragmentStateArgs = InboxScreenModel.FragmentStateArgs(0)
+    private set
+
     val currentUser = dataRepository.getCurrentRedditUser()
+    private val isRefreshing = MutableLiveData<Boolean>()
     private val currentMessageFilter = MutableLiveData<MessageFilterOption>().default(MessageFilterOption.INBOX)
     private val actionDispatcher = MutableLiveData<Pair<InboxFragmentAction, RedditMessage?>?>()
 
@@ -99,6 +102,10 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
 
     fun shouldRequestPreventToolbarScroll(lastItemVisible: Boolean): Boolean {
         return !lastItemVisible
+    }
+
+    override fun onFragmentStop(state: InboxScreenModel.FragmentStateArgs) {
+        inboxViewState = state
     }
 
     enum class InboxFragmentAction {
