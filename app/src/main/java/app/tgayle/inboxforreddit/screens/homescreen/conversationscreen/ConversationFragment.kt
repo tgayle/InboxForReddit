@@ -1,6 +1,5 @@
 package app.tgayle.inboxforreddit.screens.homescreen.conversationscreen
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,32 +30,27 @@ class ConversationFragment : BaseHomeScreenFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.conversation_fragment, container, false)
-        view.conversation_detail_rv.layoutManager = layoutManager
-        view.conversation_detail_rv.adapter = adapter
+        postponeEnterTransition()
 
         viewModel.conversationInfo.observe(this, Observer {
             if (it == null) return@Observer
-            startPostponedEnterTransition()
             activityViewModel.requestToolbarTitleChange(it.subject)
         })
 
         viewModel.getConversationMessages().observe(this, Observer {
             adapter.submitList(it)
             view.conversation_detail_rv.doOnNextLayout {
-                layoutManager.scrollToPositionWithOffset(0, 0)
+                layoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 1000)
+                startPostponedEnterTransition()
             }
         })
-
-        return view
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        postponeEnterTransition()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.conversation_fragment, container, false)
+        view.conversation_detail_rv.layoutManager = layoutManager
+        view.conversation_detail_rv.adapter = adapter
+        return view
     }
 
 }
