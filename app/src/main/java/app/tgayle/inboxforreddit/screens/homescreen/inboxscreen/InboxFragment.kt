@@ -14,6 +14,7 @@ import app.tgayle.inboxforreddit.screens.homescreen.BaseHomeScreenFragment
 import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.InboxFragmentViewModel.InboxFragmentAction.NAVIGATE_TO_CONVERSATION
 import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.view.PagedMessageAdapter
 import kotlinx.android.synthetic.main.inbox_fragment.*
+import kotlinx.android.synthetic.main.inbox_fragment.view.*
 
 class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, PopupMenu.OnMenuItemClickListener {
     private lateinit var viewModel: InboxFragmentViewModel
@@ -33,6 +34,9 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
         rvAdapter = PagedMessageAdapter()
         rvLayoutManager = LinearLayoutManager(context)
 
+        view.inbox_fragment_refresh.setOnRefreshListener { onRefresh() }
+        view.inbox_fragment_messageRv.adapter = rvAdapter
+        view.inbox_fragment_messageRv.layoutManager = rvLayoutManager
 
         rvAdapter.onMessageClickListener = {
             viewModel.onMessageClicked(it)
@@ -77,13 +81,6 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
         })
 
         return view
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        inbox_fragment_refresh.setOnRefreshListener { onRefresh() }
-        inbox_fragment_messageRv.adapter = rvAdapter
-        inbox_fragment_messageRv.layoutManager = rvLayoutManager
     }
 
     override fun onRefresh() {
