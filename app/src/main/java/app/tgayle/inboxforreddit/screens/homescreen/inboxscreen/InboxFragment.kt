@@ -122,7 +122,7 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
     override fun onStop() {
         val firstVisibleMessagePosition = rvLayoutManager.findFirstVisibleItemPosition()
         val itemTop = rvLayoutManager.findViewByPosition(firstVisibleMessagePosition)?.top ?: 0
-        viewModel.onFragmentStop(InboxScreenModel.FragmentStateArgs(firstVisibleMessagePosition, itemTop))
+        viewModel.onFragmentStop(InboxScreenStateArgs(firstVisibleMessagePosition, itemTop))
         super.onStop()
     }
 }

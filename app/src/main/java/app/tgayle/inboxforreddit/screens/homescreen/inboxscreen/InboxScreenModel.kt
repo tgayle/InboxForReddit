@@ -14,7 +14,6 @@ interface InboxScreenModel {
     fun onFilterSelection(item: Int?): Boolean
     fun onRefresh(user: RedditClientAccountPair?, wasUserInteractionInvolved: Boolean)
     fun onMessageClicked(message: RedditMessage)
-    fun onFragmentStop(state: FragmentStateArgs)
+    fun onFragmentStop(state: InboxScreenStateArgs)
 
-    data class FragmentStateArgs(var firstVisibleMessagePosition: Int = 0, var viewOffset: Int = 0, val lastAccount: RedditClientAccountPair? = null)
 }

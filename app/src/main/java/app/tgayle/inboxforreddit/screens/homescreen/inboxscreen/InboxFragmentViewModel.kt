@@ -21,7 +21,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), InboxScreenModel {
-    var inboxViewState: InboxScreenModel.FragmentStateArgs = InboxScreenModel.FragmentStateArgs()
+    var inboxViewState: InboxScreenStateArgs =
+        InboxScreenStateArgs()
     private set
 
     val currentUser = dataRepository.getCurrentRedditUser()
@@ -104,7 +105,7 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
         return !lastItemVisible
     }
 
-    override fun onFragmentStop(state: InboxScreenModel.FragmentStateArgs) {
+    override fun onFragmentStop(state: InboxScreenStateArgs) {
         inboxViewState = state.copy(lastAccount = currentUser.value)
     }
 
