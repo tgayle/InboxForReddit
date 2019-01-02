@@ -188,9 +188,7 @@ class DataRepository(private val appDatabase: AppDatabase,
                 MessageFilterOption.INBOX -> appDatabase.messages().getConversationPreviewDataSource(username)
                 MessageFilterOption.SENT -> appDatabase.messages().getUserSentMessagesDescDataSource(username)
                 MessageFilterOption.UNREAD -> appDatabase.messages().getConversationsWithUnreadMessagesDataSource(username)
-                else -> {
-                    appDatabase.messages().getConversationPreviewDataSource(username)
-                }
+                else -> appDatabase.messages().getConversationPreviewDataSource(username)
             }
 
             return@switchMap LivePagedListBuilder<Int, RedditMessage>(sourceDataSource, 15).build()

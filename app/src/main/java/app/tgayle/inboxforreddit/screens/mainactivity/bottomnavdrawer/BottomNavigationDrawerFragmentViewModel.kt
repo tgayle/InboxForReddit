@@ -37,7 +37,7 @@ class BottomNavigationDrawerFragmentViewModel(val dataRepository: DataRepository
                 val allUsers = dataRepository.getUsersDeferred().await()
                 val accountToSwitchTo = allUsers.firstOrNull { it.name != currentUsername}
                 if (accountToSwitchTo == null) {
-                    // Go back to login screen
+                    TODO("Go back to login screen")
                 } else {
                     dataRepository.updateCurrentUser(dataRepository.getClientFromUser(accountToSwitchTo).await())
                 }

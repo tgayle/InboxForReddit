@@ -56,9 +56,13 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
                 val isLastItemVisible = rvLayoutManager.findLastCompletelyVisibleItemPosition() == rvAdapter.itemCount - 1
                 val toolbarScrollingEnabled = viewModel.shouldRequestPreventToolbarScroll(isLastItemVisible)
                 activityViewModel.requestChangeToolbarScrollState(toolbarScrollingEnabled)
+                /* Scroll back to last position if we return to this screen */
                 viewModel.inboxViewState.run {
-                    view.post {
-                        rvLayoutManager.scrollToPositionWithOffset(firstVisibleMessagePosition, viewOffset)
+                    // Don't try to scroll back to last position if we've switched accounts.
+                    if (lastAccount?.account?.name == viewModel.currentUser.value?.account?.name) {
+                        view.post {
+                            rvLayoutManager.scrollToPositionWithOffset(firstVisibleMessagePosition, viewOffset)
+                        }
                     }
                 }
             }

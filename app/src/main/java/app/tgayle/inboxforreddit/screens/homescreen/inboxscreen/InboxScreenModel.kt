@@ -16,5 +16,5 @@ interface InboxScreenModel {
     fun onMessageClicked(message: RedditMessage)
     fun onFragmentStop(state: FragmentStateArgs)
 
-    data class FragmentStateArgs(var firstVisibleMessagePosition: Int, var viewOffset: Int = 0)
+    data class FragmentStateArgs(var firstVisibleMessagePosition: Int = 0, var viewOffset: Int = 0, val lastAccount: RedditClientAccountPair? = null)
 }
