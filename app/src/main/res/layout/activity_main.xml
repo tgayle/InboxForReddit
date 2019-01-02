@@ -16,7 +16,8 @@
             app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
-                android:background="#FFFFFFFF"
+                android:background="@color/windowBackground"
+                app:titleTextColor="@color/defaultTextColor"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll"
@@ -41,15 +42,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:hideOnScroll="true"
-            app:fabAlignmentMode="end"
             app:navigationIcon="@drawable/menu_hamburger"
             android:backgroundTint="@color/colorPrimary"
             app:menu="@menu/home_bottom_navbar"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:id="@+id/home_fab"
-            android:src="@drawable/icon_create"
-            android:layout_height="wrap_content"
-            app:layout_anchor="@id/home_bottom_bar"/>
+    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:id="@+id/home_fab"-->
+            <!--android:src="@drawable/icon_create"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:layout_anchor="@id/home_bottom_bar"/>-->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

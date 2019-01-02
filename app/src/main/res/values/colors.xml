@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#0288D1</color>
-    <color name="colorPrimaryDark">#005b9f</color>
-    <color name="colorAccent">#7986cb</color>
-    <color name="windowBackground">#FFFFFF</color>
-    <color name="defaultTextColor">#000000</color>
+    <color name="colorPrimary">#202020</color>
+    <color name="colorPrimaryDark">#1b1b1b</color>
+    <color name="colorAccent">#1DE9B6</color>
+    <!--<color name="windowBackground">#FFFFFF</color>-->
+    <color name="windowBackground">@color/colorPrimary</color>
+    <color name="defaultTextColor">#EDE7F6</color>
 </resources>

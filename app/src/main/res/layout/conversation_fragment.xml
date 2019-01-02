@@ -15,9 +15,6 @@
             tools:listitem="@layout/conversation_message_rv_item"
             android:id="@+id/conversation_detail_rv"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
-
-    </androidx.recyclerview.widget.RecyclerView>
+            app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

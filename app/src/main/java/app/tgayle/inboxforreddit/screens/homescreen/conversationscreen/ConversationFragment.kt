@@ -17,8 +17,8 @@ import kotlinx.android.synthetic.main.conversation_fragment.view.*
 class ConversationFragment : BaseHomeScreenFragment() {
     private lateinit var viewModel: ConversationViewModel
     private lateinit var vmFactory: ConversationViewModelFactory
-    private val adapter = ConversationMessagePagedAdapter()
-    private val layoutManager = LinearLayoutManager(context)
+    private val messagesAdapter = ConversationMessagePagedAdapter()
+    private val messagesLayoutManager = LinearLayoutManager(context)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +38,9 @@ class ConversationFragment : BaseHomeScreenFragment() {
         })
 
         viewModel.getConversationMessages().observe(this, Observer {
-            adapter.submitList(it)
+            messagesAdapter.submitList(it)
             view.conversation_detail_rv.doOnNextLayout {
-                layoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 1000)
+                messagesLayoutManager.scrollToPositionWithOffset(messagesAdapter.itemCount - 1, 1000)
                 startPostponedEnterTransition()
             }
         })
@@ -48,8 +48,8 @@ class ConversationFragment : BaseHomeScreenFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.conversation_fragment, container, false)
-        view.conversation_detail_rv.layoutManager = layoutManager
-        view.conversation_detail_rv.adapter = adapter
+        view.conversation_detail_rv.layoutManager = messagesLayoutManager
+        view.conversation_detail_rv.adapter = messagesAdapter
         return view
     }
 

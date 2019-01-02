@@ -102,12 +102,12 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavControl
     private fun hideWindowBarsAndFab() {
         main_toolbar.visibility = View.GONE
         home_bottom_bar.visibility = View.GONE
-        home_fab.hide()
+//        home_fab.hide()
     }
 
     private fun showWindowBarsAndFab() {
         main_toolbar.visibility = View.VISIBLE
         home_bottom_bar.visibility = View.VISIBLE
-        home_fab.show()
+//        home_fab.show()
     }
 }

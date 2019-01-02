@@ -29,9 +29,9 @@ class MessageViewHolder(override val containerView: View) : RecyclerView.ViewHol
                 onMessageClick?.invoke(this)
             }
 
-            val primaryColor = ContextCompat.getColor(
+            val accentColor = ContextCompat.getColor(
                 itemView.context,
-                R.color.colorPrimary
+                R.color.colorAccent
             )
             val defaultTextColor = ContextCompat.getColor(
                 itemView.context,
@@ -43,8 +43,8 @@ class MessageViewHolder(override val containerView: View) : RecyclerView.ViewHol
                 message_rv_item_author.typeface = bold
                 message_rv_item_subject.typeface = bold
                 message_rv_item_date.typeface = bold
-                message_rv_item_date.setTextColor(primaryColor)
-                message_rv_item_sentreceived.setColorFilter(primaryColor)
+                message_rv_item_date.setTextColor(accentColor)
+                message_rv_item_sentreceived.setColorFilter(accentColor)
             } else {
                 val defaultTypeface = Typeface.DEFAULT
                 message_rv_item_author.typeface = defaultTypeface

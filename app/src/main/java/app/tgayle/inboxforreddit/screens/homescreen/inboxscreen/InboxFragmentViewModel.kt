@@ -73,7 +73,7 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
             Log.d("Inbox", "Send refresh request.")
             isRefreshing.value = true
             withContext(Dispatchers.Default) {
-                dataRepository.refreshMessages(user.client, user.account)
+                dataRepository.refreshMessages(user.client, user.account!!)
             }
             isRefreshing.value = false
             lastRefresh = currentTime
