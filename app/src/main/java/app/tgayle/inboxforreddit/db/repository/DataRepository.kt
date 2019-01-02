@@ -36,6 +36,10 @@ class DataRepository(private val appDatabase: AppDatabase,
         return@async appDatabase.accounts().getAllSync()
     }
 
+    /**
+     * Retrieves relevant user information from Reddit then saves the user locally. Runs asynchronously.
+     * @param user A JRAW client containing user information.
+     */
     fun saveUser(user: RedditClient) = GlobalScope.async {
         val account = user.me().query().account
         if (account != null) {
@@ -46,33 +50,63 @@ class DataRepository(private val appDatabase: AppDatabase,
         }
     }
 
+    /**
+     * Updates the repository's current user.
+     * @param newUser
+     */
     fun updateCurrentUser(newUser: RedditClientAccountPair) {
         redditClient.postValue(newUser)
     }
 
+    /**
+     * Retrieves local user information and returns it along with a client for making requests with that user.
+     * @param name The name of the user to retrive a client for.
+     */
     fun getClientFromUser(name: String) = GlobalScope.async {
         RedditClientAccountPair(accountHelper.switchToUser(name), appDatabase.accounts().getUserSync(name))
     }
 
+    /**
+     * @see getClientFromUser(String)
+     */
     fun getClientFromUser(user: RedditAccount) = getClientFromUser(user.name)
 
-    private fun saveMessages(messages: List<RedditMessage>)= GlobalScope.async {
+    /**
+     * Saves a list of messages locally.
+     */
+    private fun saveMessages(messages: List<RedditMessage>) = GlobalScope.async {
         val result = appDatabase.messages().upsert(messages)
         Log.d("Data Repo", "Just saved ${result.size} messages.")
         return@async result
     }
 
+    /**
+     * Returns LiveData containing a user's messages.
+     * @param user The user whose messages should be retrieved.
+     */
     fun getMessages(user: LiveData<RedditClientAccountPair>) = Transformations.switchMap(user) {
         appDatabase.messages().getUserMessages(it.account?.name)
     }
 
+    /**
+     * Returns LiveData containing a list of user conversations. Each "conversation" in this list is a [RedditMessage],
+     * and each message is the oldest for that unique first_message_name, effectively giving us the newest message for
+     * that conversation.
+     *
+     * @param user The user whose messages should be retrieved.
+     */
     fun getInbox(user: LiveData<RedditAccount>) = Transformations.switchMap(user) {
         appDatabase.messages().getConversationPreviews(it.name)
     }
 
-    suspend fun refreshMessages(client: RedditClient, account: RedditAccount?): List<Long> {
+    /**
+     * Refreshes user messages, either loading all past messages if the user has 0 messages stored locally, or loading
+     * the most recent messages if the user already has messages stored locally.
+     * @param client A client for making reddit requests
+     * @param account The locally stored user that these messages are for.
+     */
+    suspend fun refreshMessages(client: RedditClient, account: RedditAccount): List<Long> {
         Log.d("DataRepo", "Starting load...")
-        if (account == null) throw RuntimeException("Account was null when trying to refresh messages.")
         client.autoRenew = true
 
         val numPreexistingUserMessages = appDatabase.messages().getUserMessageCount(account.name)
@@ -85,6 +119,12 @@ class DataRepository(private val appDatabase: AppDatabase,
         }
     }
 
+    /**
+     * Loads a user's newest private messages, running lazily loading each page until we find a message we already have locally
+     * stored.
+     * @param client The client to use for retrieving messages
+     * @param account The user who these messages should belong to upon saving.
+     */
     private suspend fun loadNewestMessages(client: RedditClient, account: RedditAccount): List<Long> {
         Log.d("Data Repo", "Attempting to load newest messages...")
         val newestSentMessageName = appDatabase.messages().getNewestSentUserMessageNameSync(account.name)
@@ -100,9 +140,13 @@ class DataRepository(private val appDatabase: AppDatabase,
         stopped when we reach the newest message in the database.
          */
         val allNewMessages = mutableListOf<Message>()
+
         val inboxPair = Pair("inbox", oldestUnreadMessageName)
         val sentPair = Pair("sent", newestSentMessageName)
-        val wheres = arrayOf(inboxPair, sentPair)
+        /* Load unread messages in case an older saved message was changed to unread. */
+        val unreadPair = Pair("unread", "")
+
+        val wheres = arrayOf(inboxPair, sentPair, unreadPair)
         val messageRoutines = wheres.map { (where, newestMessageNameForThisWhere) ->
                 GlobalScope.async {
                     val paginator = getInboxPaginator(client, where, 30)
@@ -125,6 +169,11 @@ class DataRepository(private val appDatabase: AppDatabase,
         return saveMessages(allMessagesAsRedditMessages).await()
     }
 
+    /**
+     * Loads all of a user's past private messages, downloading each 'where' in its entirety.
+     * @param client The client to use for retrieving messages
+     * @param account The local user who these messages should belong to upon being saved.
+     */
     private suspend fun loadAllPastMessages(client: RedditClient, account: RedditAccount): List<Long> {
         Log.d("Data Repo", "Loading all past messages.")
         val wheres = arrayOf("inbox", "sent")
@@ -143,6 +192,11 @@ class DataRepository(private val appDatabase: AppDatabase,
         return saveMessages(messagesAsLocalMessages).await()
     }
 
+    /**
+     * Converts a JRAW [Message] to a local [RedditMessage], generating a unique UUID as well.
+     * @param account The account who these messages will belong to. [RedditMessage.owner]
+     * @param messages A list of messages to be converted.
+     */
     private fun convertNetMessageToLocalMessage(account: RedditAccount, messages: List<Message>) = messages.map { message ->
         val parentId = message.firstMessage?: message.fullName
 
@@ -150,9 +204,13 @@ class DataRepository(private val appDatabase: AppDatabase,
             message.isUnread, message.fullName, parentId, message.created, message.subject, message.body, message.distinguished)
     }
 
-    private fun filterToPrivateMessages(messages: List<Message>) = messages.filter { message ->
-        message.fullName.startsWith("t4") // only private messages
-    }
+    /**
+     * Filters a list of messages to only include private messages. Reddit API classifies a private message as a message
+     * whose fullname starts with 't4'
+     *
+     * @param messages A list of messages from JRAW to filter.
+     */
+    private fun filterToPrivateMessages(messages: List<Message>) = messages.filter { message -> message.fullName.startsWith("t4") }
 
     private fun getInboxPaginator(client: RedditClient, where: String, limit: Int) = client
         .me()
@@ -197,17 +255,32 @@ class DataRepository(private val appDatabase: AppDatabase,
 
     fun getUsersAndUnreadMessageCountForEach() = LivePagedListBuilder(appDatabase.messages().getUsernamesAndUnreadMessageCountsForEach(), 5).build()
 
+    /**
+     * Returns a [RedditAccount] from the local database or null if the user doesn't exist. Runs synchronously and must
+     * be run on another thread.
+     * @param username The name of the user to retrieve.
+     */
     fun getUserSync(username: String?): RedditAccount? = appDatabase.accounts().getUserSync(username)
 
+    /**
+     * Removes a given user from the local database and all their messages.
+     * @param username The name of the user to be removed.
+     */
     fun removeUser(username: String?) = GlobalScope.async {
+        if (username == null) return@async
         appDatabase.accounts().removeUserByName(username)
         appDatabase.messages().removeMessagesWithOwner(username)
     }
 
     fun getConversationMessages(conversationParentName: String): LiveData<PagedList<RedditMessage>> {
-        return LivePagedListBuilder(appDatabase.messages().getConversationMessages(conversationParentName), 15)
-            .build()
+        return LivePagedListBuilder(
+            appDatabase.messages().getConversationMessages(conversationParentName), 15
+        ).build()
     }
 
+    /**
+     * Returns the oldest message for a conversation.
+     * @param conversationParentName The first_message_name to find the oldest message for.
+     */
     fun getFirstMessageOfConversation(conversationParentName: String?) = appDatabase.messages().getFirstMessageOfConversation(conversationParentName)
 }
