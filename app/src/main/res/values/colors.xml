@@ -3,6 +3,12 @@
     <color name="colorPrimary">#0288D1</color>
     <color name="colorPrimaryDark">#005b9f</color>
     <color name="colorAccent">#7986cb</color>
-    <color name="windowBackground">#FFFFFF</color>
+    <color name="window_background">#FFFFFF</color>
     <color name="defaultTextColor">#000000</color>
+
+    <color name="colorPrimary_dank">#202020</color>
+    <color name="colorPrimaryDark_dank">#1b1b1b</color>
+    <color name="colorAccent_dank">#1DE9B6</color>
+    <color name="window_background_dank">#292929</color>
+    <color name="defaultTextColor_dank">#FFFFFF</color>
 </resources>

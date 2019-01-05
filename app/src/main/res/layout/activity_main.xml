@@ -16,8 +16,8 @@
             app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
-                android:background="@color/windowBackground"
-                app:titleTextColor="@color/defaultTextColor"
+                android:background="?android:windowBackground"
+                app:titleTextColor="?android:textColor"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll"
@@ -43,7 +43,7 @@
             android:layout_gravity="bottom"
             app:hideOnScroll="true"
             app:navigationIcon="@drawable/menu_hamburger"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="?colorPrimary"
             app:menu="@menu/home_bottom_navbar"/>
 
     <!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->

@@ -9,12 +9,16 @@ import app.tgayle.inboxforreddit.db.repository.DataRepository
 import app.tgayle.inboxforreddit.util.default
 
 class MainActivityViewModel(val dataRepository: DataRepository): ViewModel(), MainActivityModel {
+    var nightModeEnabled = false
+    private set
+
     private val currentToolbarText = MutableLiveData<String>()
     private val toolbarScrollEnabled = MutableLiveData<Boolean>().default(true)
-    private val navigationDecision = MutableLiveData<MainActivityAction?>()
+    private val actionDispatch = MutableLiveData<MainActivityAction?>()
 
     enum class MainActivityAction {
-        NAVIGATE_LOGIN
+        NAVIGATE_LOGIN,
+        RECREATE_ACTIVITY
     }
 
     override fun onIntentOccurred(intent: Intent) {
@@ -22,7 +26,7 @@ class MainActivityViewModel(val dataRepository: DataRepository): ViewModel(), Ma
 
     fun getCurrentToolbarText(): LiveData<String> = currentToolbarText
     fun getToolbarScrollEnabled(): LiveData<Boolean> = toolbarScrollEnabled
-    fun getNavigationDecision(): LiveData<MainActivityAction?> = navigationDecision
+    fun getActionDispatch(): LiveData<MainActivityAction?> = actionDispatch
 
     override fun requestToolbarTitleChange(title: String?) {
         if (title != null) {
@@ -35,11 +39,16 @@ class MainActivityViewModel(val dataRepository: DataRepository): ViewModel(), Ma
         Log.d("MainActivityViewModel", "Toolbar scroll to be set to $enabled")
     }
 
-    fun onNavigationAcknowledged() {
-        navigationDecision.value = null
+    fun onActionAcknowledged() {
+        actionDispatch.value = null
     }
 
     override fun requestNavigateAddAccount() {
-        navigationDecision.value = MainActivityAction.NAVIGATE_LOGIN
+        actionDispatch.value = MainActivityAction.NAVIGATE_LOGIN
+    }
+
+    fun themeChangeRequested() {
+        nightModeEnabled = !nightModeEnabled
+        actionDispatch.value = MainActivityAction.RECREATE_ACTIVITY
     }
 }

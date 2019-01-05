@@ -2,6 +2,7 @@ package app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
@@ -13,10 +14,13 @@ import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragmentViewModel.BottomNavigationDrawerAction.DISMISS
 import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragmentViewModel.BottomNavigationDrawerAction.NOTIFY_MAIN_ACTIVITY_FOR_ADD_ACCOUNT
+import app.tgayle.inboxforreddit.util.getColorFromAttr
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.main_bottom_nav_drawer.*
 
-class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
+
+class BottomNavigationDrawerFragment: BottomSheetDialogFragment(), NavigationView.OnNavigationItemSelectedListener {
     private val vmFactory = BottomNavigationDrawerFragmentViewModelFactory(AppSingleton.dataRepository)
     lateinit var activityVm: MainActivityViewModel
     lateinit var viewModel: BottomNavigationDrawerFragmentViewModel
@@ -53,6 +57,9 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
             viewModel.onActionDispatchAcknowledged()
         })
 
+        /* XML background attribute doesn't seem to work on bottom sheets so we set it here.*/
+        view.setBackgroundColor(context!!.getColorFromAttr(android.R.attr.windowBackground))
+
         return view
     }
 
@@ -65,14 +72,22 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
             viewModel.onUserAddClick()
         }
 
-        usersAdapter.onUserClick =  {user -> viewModel.onUserListClick(user) }
+        main_bottom_navigation_view.setNavigationItemSelectedListener(this)
+
+        usersAdapter.onUserClick = {user -> viewModel.onUserListClick(user) }
 
         usersAdapter.onUserRemoveClick = {user -> viewModel.onUserRemoveClick(user) }
 
         usersAdapter.onUserAddClick = { viewModel.onUserAddClick() }
+    }
 
-        main_bottom_navigation_view.setNavigationItemSelectedListener {
-            return@setNavigationItemSelectedListener false
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.toggle_night_mode -> {
+                activityVm.themeChangeRequested()
+                true
+            }
+            else -> false
         }
     }
 }

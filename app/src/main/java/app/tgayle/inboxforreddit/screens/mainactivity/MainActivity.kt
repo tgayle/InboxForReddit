@@ -16,6 +16,7 @@ import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.loginscreen.LoginScreenFragmentArgs
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel.MainActivityAction.NAVIGATE_LOGIN
+import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel.MainActivityAction.RECREATE_ACTIVITY
 import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragment
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,6 +27,10 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavControl
     lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        vmFactory = MainActivityViewModelFactory(AppSingleton.dataRepository)
+        viewModel = ViewModelProviders.of(this, vmFactory).get(MainActivityViewModel::class.java)
+        this.setTheme(if (viewModel.nightModeEnabled) R.style.DankTheme else R.style.InboxTheme)
+        // TODO: Persist night node
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(home_bottom_bar)
@@ -33,8 +38,6 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavControl
         navController = findNavController(R.id.nav_host)
         navController.addOnDestinationChangedListener(this)
 
-        vmFactory = MainActivityViewModelFactory(AppSingleton.dataRepository)
-        viewModel = ViewModelProviders.of(this, vmFactory).get(MainActivityViewModel::class.java)
         viewModel.onIntentOccurred(intent) // Pass intent in case we start from some specific context.
 
         viewModel.getCurrentToolbarText().observe(this, Observer {
@@ -46,15 +49,20 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavControl
         })
 
         main_toolbar.setupWithNavController(navController, appBarConfiguration())
+        main_toolbar.setOnClickListener {
+            viewModel.themeChangeRequested()
+//            this.recreate()
+        }
 
-        viewModel.getNavigationDecision().observe(this, Observer {
+        viewModel.getActionDispatch().observe(this, Observer {
             if (it == null) return@Observer
             when (it) {
                 NAVIGATE_LOGIN -> {
                     navController.navigate(R.id.loginFragment, LoginScreenFragmentArgs.Builder().setPopBackStackAfterLogin(true).build().toBundle())
                 }
+                RECREATE_ACTIVITY -> recreate()
             }
-            viewModel.onNavigationAcknowledged()
+            viewModel.onActionAcknowledged()
         })
 
     }

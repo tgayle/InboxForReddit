@@ -2,13 +2,14 @@ package app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.view
 
 import android.graphics.Typeface
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.model.RedditMessage
+import app.tgayle.inboxforreddit.util.getColorFromAttr
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.message_rv_item.*
 import java.text.SimpleDateFormat
+
+
 
 typealias OnMessageClickListener = (message: RedditMessage) -> Unit
 
@@ -29,14 +30,8 @@ class MessageViewHolder(override val containerView: View) : RecyclerView.ViewHol
                 onMessageClick?.invoke(this)
             }
 
-            val accentColor = ContextCompat.getColor(
-                itemView.context,
-                R.color.colorAccent
-            )
-            val defaultTextColor = ContextCompat.getColor(
-                itemView.context,
-                R.color.defaultTextColor
-            )
+            val accentColor = itemView.context.getColorFromAttr(android.R.attr.colorAccent)
+            val defaultTextColor = itemView.context.getColorFromAttr(android.R.attr.textColor)
 
             if (unread) {
                 val bold = Typeface.DEFAULT_BOLD
@@ -51,12 +46,12 @@ class MessageViewHolder(override val containerView: View) : RecyclerView.ViewHol
                 message_rv_item_subject.typeface = defaultTypeface
                 message_rv_item_date.typeface = defaultTypeface
                 message_rv_item_date.setTextColor(defaultTextColor)
-                message_rv_item_sentreceived.setColorFilter(null)
+                message_rv_item_sentreceived.colorFilter = null
             }
         }
     }
 
-    fun reset() {
+    private fun reset() {
         message_rv_item_author.text = null
         message_rv_item_date.text = null
         message_rv_item_message.text = null
