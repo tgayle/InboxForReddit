@@ -22,6 +22,8 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
     private lateinit var rvLayoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setHasOptionsMenu(true)
+
         viewModel = ViewModelProviders
             .of(this, InboxFragmentViewModelFactory(AppSingleton.dataRepository))
             .get(InboxFragmentViewModel::class.java)
@@ -30,7 +32,6 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view =  inflater.inflate(R.layout.inbox_fragment, container, false)
-        setHasOptionsMenu(true)
         rvAdapter = PagedMessageAdapter()
         rvLayoutManager = LinearLayoutManager(context)
 

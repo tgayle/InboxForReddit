@@ -1,9 +1,7 @@
 package app.tgayle.inboxforreddit.screens.homescreen.conversationscreen
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.view.doOnNextLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -12,6 +10,7 @@ import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.homescreen.BaseHomeScreenFragment
 import app.tgayle.inboxforreddit.screens.homescreen.conversationscreen.view.ConversationMessagePagedAdapter
+import app.tgayle.inboxforreddit.util.MaterialSnackbar
 import kotlinx.android.synthetic.main.conversation_fragment.view.*
 
 class ConversationFragment : BaseHomeScreenFragment() {
@@ -22,6 +21,8 @@ class ConversationFragment : BaseHomeScreenFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+
         val conversationParentName = arguments?.getString("parentName")
             ?: throw IllegalArgumentException("Required conversation parent name was null")
 
@@ -51,6 +52,28 @@ class ConversationFragment : BaseHomeScreenFragment() {
         view.conversation_detail_rv.layoutManager = messagesLayoutManager
         view.conversation_detail_rv.adapter = messagesAdapter
         return view
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.conversation_fragment_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item!!.itemId) {
+            R.id.scroll_top_bottom -> {
+                MaterialSnackbar.make(view!!, "Scroll not yet implemented yet! c:", MaterialSnackbar.SnackbarLength.SHORT).show()
+                true
+            }
+            R.id.search -> {
+                MaterialSnackbar.make(view!!, "Search not implemented yet! c:", MaterialSnackbar.SnackbarLength.SHORT).show()
+                true
+            }
+            R.id.reply -> {
+                MaterialSnackbar.make(view!!, "Not implemented yet! c:", MaterialSnackbar.SnackbarLength.SHORT).show()
+                true
+            }
+            else -> false
+        }
     }
 
 }

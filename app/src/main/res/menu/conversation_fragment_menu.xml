@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/scroll_top_bottom"
+        android:title="Jump to top/bottom"
+        android:icon="@drawable/icon_arrow_down"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/search"
+        android:title="Search"
+        android:icon="@drawable/icon_search"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/reply"
+        android:title="Reply"
+        android:icon="@drawable/icon_reply"
+        app:showAsAction="ifRoom"/>
+</menu>
