@@ -43,11 +43,11 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
             viewModel.onMessageClicked(it)
         }
 
-        viewModel.currentUser.observe(this, Observer {
+        viewModel.currentUser.observe(viewLifecycleOwner, Observer {
             viewModel.onRefresh(viewModel.currentUser.value, false)
         })
 
-        viewModel.getInboxFromClientAndAccount(viewModel.currentUser).observe(this, Observer {
+        viewModel.getInboxFromClientAndAccount(viewModel.currentUser).observe(viewLifecycleOwner, Observer {
             rvAdapter.submitList(it)
             /*
             Use doOnNextLayout to make sure items have finished being laid out in the view so we can accurately decide if
@@ -69,15 +69,15 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
             }
         })
 
-        viewModel.getRefreshing().observe(this, Observer {
+        viewModel.getRefreshing().observe(viewLifecycleOwner, Observer {
             inbox_fragment_refresh.isRefreshing = it
         })
 
-        viewModel.getCurrentFilterTitle().observe(this, Observer {
+        viewModel.getCurrentFilterTitle().observe(viewLifecycleOwner, Observer {
             activityViewModel.requestToolbarTitleChange(it)
         })
 
-        viewModel.getActionDispatch().observe(this, Observer {
+        viewModel.getActionDispatch().observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
 
             when (it.first) {

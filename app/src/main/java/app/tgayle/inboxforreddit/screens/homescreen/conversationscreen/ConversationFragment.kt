@@ -33,12 +33,12 @@ class ConversationFragment : BaseHomeScreenFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         postponeEnterTransition()
 
-        viewModel.conversationInfo.observe(this, Observer {
+        viewModel.conversationInfo.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
             activityViewModel.requestToolbarTitleChange(it.subject)
         })
 
-        viewModel.getConversationMessages().observe(this, Observer {
+        viewModel.getConversationMessages().observe(viewLifecycleOwner, Observer {
             messagesAdapter.submitList(it)
             view.conversation_detail_rv.doOnNextLayout {
                 messagesLayoutManager.scrollToPositionWithOffset(messagesAdapter.itemCount - 1, 1000)

@@ -36,15 +36,15 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment(), NavigationVie
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.main_bottom_nav_drawer, container, false)
-        viewModel.getCurrentUser().observe(this, Observer {
+        viewModel.getCurrentUser().observe(viewLifecycleOwner, Observer {
             bottom_nav_username.text = it.account?.name
         })
 
-        viewModel.getUsersList().observe(this, Observer {
+        viewModel.getUsersList().observe(viewLifecycleOwner, Observer {
             usersAdapter.submitList(it)
         })
 
-        viewModel.getActionDispatch().observe(this, Observer {
+        viewModel.getActionDispatch().observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
 
             when (it) {

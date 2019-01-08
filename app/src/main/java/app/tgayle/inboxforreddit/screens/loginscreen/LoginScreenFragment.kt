@@ -46,7 +46,7 @@ class LoginScreenFragment : Fragment(), LoginScreenModel.Listener {
     }
 
     private fun listenForNavigation() {
-        viewModel.getNavigationDecision().observe(this, Observer {
+        viewModel.getNavigationDecision().observe(viewLifecycleOwner, Observer {
             when (it) {
                 null -> Log.d("Login", "Nav decision currently null.")
                 LoginFragmentViewModel.LoginFragmentNavigation.HOME -> findNavController().navigate(LoginScreenFragmentDirections.actionLoginFragmentToHomeFragment())

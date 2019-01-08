@@ -39,7 +39,7 @@ class SplashFragment : Fragment(), SplashScreenModel.Listener {
     }
 
     override fun listenForNavigation() {
-        viewModel.navigationDecision.observe(this, Observer { navigationId ->
+        viewModel.navigationDecision.observe(viewLifecycleOwner, Observer { navigationId ->
             if (navigationId != null) {
                 Log.d("Splash Emission", navigationId.toString())
                 GlobalScope.launch(Dispatchers.Main) {
