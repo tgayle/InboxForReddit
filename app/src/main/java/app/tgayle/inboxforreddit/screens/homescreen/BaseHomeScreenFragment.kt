@@ -1,16 +1,16 @@
 package app.tgayle.inboxforreddit.screens.homescreen
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import app.tgayle.inboxforreddit.AppSingleton
+import app.tgayle.inboxforreddit.screens.BaseFragment
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 
 /**
  * A base Fragment to be implemented by any child fragments that appear in [HomeFragment]
  */
-abstract class BaseHomeScreenFragment: Fragment() {
+abstract class BaseHomeScreenFragment: BaseFragment() {
     protected lateinit var activityViewModel: MainActivityViewModel
     protected lateinit var parentViewModel: HomeFragmentViewModel
 

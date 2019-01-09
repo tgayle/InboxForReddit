@@ -8,24 +8,26 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
+import app.tgayle.inboxforreddit.db.repository.DataRepository
 import app.tgayle.inboxforreddit.screens.homescreen.BaseHomeScreenFragment
 import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.InboxFragmentViewModel.InboxFragmentAction.NAVIGATE_TO_CONVERSATION
 import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.view.PagedMessageAdapter
 import kotlinx.android.synthetic.main.inbox_fragment.*
 import kotlinx.android.synthetic.main.inbox_fragment.view.*
+import javax.inject.Inject
 
 class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, PopupMenu.OnMenuItemClickListener {
     private lateinit var viewModel: InboxFragmentViewModel
     private lateinit var rvAdapter: PagedMessageAdapter
     private lateinit var rvLayoutManager: LinearLayoutManager
+    @Inject lateinit var dataRepository: DataRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
 
         viewModel = ViewModelProviders
-            .of(this, InboxFragmentViewModelFactory(AppSingleton.dataRepository))
+            .of(this, InboxFragmentViewModelFactory(dataRepository))
             .get(InboxFragmentViewModel::class.java)
         super.onCreate(savedInstanceState)
     }

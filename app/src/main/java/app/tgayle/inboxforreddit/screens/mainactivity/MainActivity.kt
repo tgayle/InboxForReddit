@@ -5,6 +5,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
@@ -20,14 +21,20 @@ import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel.Main
 import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragment
 import com.google.android.material.appbar.AppBarLayout
 import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavController.OnDestinationChangedListener {
+class MainActivity : AppCompatActivity(), MainActivityModel.Listener,
+    NavController.OnDestinationChangedListener, HasSupportFragmentInjector {
+
     lateinit var vmFactory: MainActivityViewModelFactory
     lateinit var viewModel: MainActivityViewModel
     lateinit var navController: NavController
     @Inject lateinit var dataRepository: DataRepository
+    @Inject lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -122,4 +129,6 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavControl
         home_bottom_bar.visibility = View.VISIBLE
 //        home_fab.show()
     }
+
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentInjector
 }

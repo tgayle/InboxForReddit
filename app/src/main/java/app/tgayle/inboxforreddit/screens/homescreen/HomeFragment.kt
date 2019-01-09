@@ -1,6 +1,7 @@
 package app.tgayle.inboxforreddit.screens.homescreen
 
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,20 +9,23 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
-import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
+import app.tgayle.inboxforreddit.db.repository.DataRepository
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
+import dagger.android.support.AndroidSupportInjection
+import javax.inject.Inject
 
 class HomeFragment : NavHostFragment() {
     lateinit var activityViewModel: MainActivityViewModel
     lateinit var viewModelFactory: HomeFragmentViewModelFactory
     lateinit var viewModel: HomeFragmentViewModel
+    @Inject lateinit var dataRepository: DataRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        activityViewModel = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(AppSingleton.dataRepository)).get(
+        activityViewModel = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(dataRepository)).get(
             MainActivityViewModel::class.java)
-        viewModelFactory = HomeFragmentViewModelFactory(AppSingleton.dataRepository)
+        viewModelFactory = HomeFragmentViewModelFactory(dataRepository)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeFragmentViewModel::class.java)
 
         super.onCreate(savedInstanceState)
@@ -38,5 +42,10 @@ class HomeFragment : NavHostFragment() {
         val homeScreenNavHost = Navigation.findNavController(homeScreenNavHostView)
         //TODO:  Bottom NavView
         //TODO:  Toolbar Button Functionality
+    }
+
+    override fun onAttach(context: Context) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
     }
 }

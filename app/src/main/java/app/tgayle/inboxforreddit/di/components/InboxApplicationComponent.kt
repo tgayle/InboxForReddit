@@ -8,6 +8,7 @@ import app.tgayle.inboxforreddit.di.modules.DatabaseModule
 import app.tgayle.inboxforreddit.di.modules.NetworkModule
 import app.tgayle.inboxforreddit.di.modules.RedditModule
 import app.tgayle.inboxforreddit.di.modules.android.ActivityBuilder
+import app.tgayle.inboxforreddit.di.modules.android.FragmentBuilder
 import app.tgayle.inboxforreddit.network.RedditApiService
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -16,7 +17,7 @@ import retrofit2.Retrofit
 
 @Component(
     modules = [NetworkModule::class, DatabaseModule::class, RedditModule::class,
-                AndroidInjectionModule::class, ActivityBuilder::class]
+                AndroidInjectionModule::class, ActivityBuilder::class, FragmentBuilder::class]
 )
 @InboxApplicationScope
 interface InboxApplicationComponent {

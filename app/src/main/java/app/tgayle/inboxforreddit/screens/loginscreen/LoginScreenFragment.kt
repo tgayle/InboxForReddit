@@ -11,25 +11,27 @@ import android.view.ViewGroup
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
+import app.tgayle.inboxforreddit.db.repository.DataRepository
+import app.tgayle.inboxforreddit.screens.BaseFragment
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import kotlinx.android.synthetic.main.fragment_login.*
+import javax.inject.Inject
 
 
-class LoginScreenFragment : Fragment(), LoginScreenModel.Listener {
+class LoginScreenFragment : BaseFragment(), LoginScreenModel.Listener {
     lateinit var viewModelFactory: LoginFragmentViewModelFactory
     lateinit var activityViewModel: MainActivityViewModel
     lateinit var viewModel: LoginFragmentViewModel
+    @Inject lateinit var dataRepository: DataRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModelFactory = LoginFragmentViewModelFactory(AppSingleton.dataRepository)
-        activityViewModel = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(AppSingleton.dataRepository)).get(MainActivityViewModel::class.java)
+        viewModelFactory = LoginFragmentViewModelFactory(dataRepository)
+        activityViewModel = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(dataRepository)).get(MainActivityViewModel::class.java)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(LoginFragmentViewModel::class.java)
         super.onCreate(savedInstanceState)
     }
