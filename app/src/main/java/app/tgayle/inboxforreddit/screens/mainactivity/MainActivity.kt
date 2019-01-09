@@ -12,22 +12,26 @@ import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
+import app.tgayle.inboxforreddit.db.repository.DataRepository
 import app.tgayle.inboxforreddit.screens.loginscreen.LoginScreenFragmentArgs
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel.MainActivityAction.NAVIGATE_LOGIN
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel.MainActivityAction.RECREATE_ACTIVITY
 import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragment
 import com.google.android.material.appbar.AppBarLayout
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), MainActivityModel.Listener, NavController.OnDestinationChangedListener {
     lateinit var vmFactory: MainActivityViewModelFactory
     lateinit var viewModel: MainActivityViewModel
     lateinit var navController: NavController
+    @Inject lateinit var dataRepository: DataRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        vmFactory = MainActivityViewModelFactory(AppSingleton.dataRepository)
+        AndroidInjection.inject(this)
+        vmFactory = MainActivityViewModelFactory(dataRepository)
         viewModel = ViewModelProviders.of(this, vmFactory).get(MainActivityViewModel::class.java)
         this.setTheme(if (viewModel.nightModeEnabled) R.style.DankTheme else R.style.InboxTheme)
         // TODO: Persist night node
