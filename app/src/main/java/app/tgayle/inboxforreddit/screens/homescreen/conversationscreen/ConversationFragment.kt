@@ -7,19 +7,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.tgayle.inboxforreddit.R
-import app.tgayle.inboxforreddit.db.repository.DataRepository
 import app.tgayle.inboxforreddit.screens.homescreen.BaseHomeScreenFragment
 import app.tgayle.inboxforreddit.screens.homescreen.conversationscreen.view.ConversationMessagePagedAdapter
 import app.tgayle.inboxforreddit.util.MaterialSnackbar
 import kotlinx.android.synthetic.main.conversation_fragment.view.*
-import javax.inject.Inject
 
 class ConversationFragment : BaseHomeScreenFragment() {
     private lateinit var viewModel: ConversationViewModel
     private lateinit var vmFactory: ConversationViewModelFactory
     private val messagesAdapter = ConversationMessagePagedAdapter()
     private val messagesLayoutManager = LinearLayoutManager(context)
-    @Inject lateinit var dataRepository: DataRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
