@@ -2,7 +2,7 @@ package app.tgayle.inboxforreddit.screens.homescreen.conversationscreen
 
 import android.os.Bundle
 import android.view.*
-import androidx.core.view.doOnNextLayout
+import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,7 +16,7 @@ class ConversationFragment : BaseHomeScreenFragment() {
     private lateinit var viewModel: ConversationViewModel
     private lateinit var vmFactory: ConversationViewModelFactory
     private val messagesAdapter = ConversationMessagePagedAdapter()
-    private val messagesLayoutManager = LinearLayoutManager(context)
+    private val messagesLayoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +39,8 @@ class ConversationFragment : BaseHomeScreenFragment() {
 
         viewModel.getConversationMessages().observe(viewLifecycleOwner, Observer {
             messagesAdapter.submitList(it)
-            view.conversation_detail_rv.doOnNextLayout {
-                messagesLayoutManager.scrollToPositionWithOffset(messagesAdapter.itemCount - 1, 1000)
+            (view.parent as? ViewGroup)?.doOnPreDraw {
+                // Parent has been drawn. Start transitioning!
                 startPostponedEnterTransition()
             }
         })
@@ -51,6 +51,14 @@ class ConversationFragment : BaseHomeScreenFragment() {
         view.conversation_detail_rv.layoutManager = messagesLayoutManager
         view.conversation_detail_rv.adapter = messagesAdapter
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!viewModel.hasFragmentFirstOpenOccurred) {
+            messagesLayoutManager.scrollToPositionWithOffset(messagesAdapter.itemCount - 1, 100)
+            viewModel.onFragmentFirstOpenOccurred()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

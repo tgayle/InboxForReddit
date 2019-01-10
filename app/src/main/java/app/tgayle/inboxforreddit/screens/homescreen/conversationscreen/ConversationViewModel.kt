@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 
 class ConversationViewModel(private val conversationParentId: String, private val dataRepository: DataRepository) : ViewModel() {
     val conversationInfo = MutableLiveData<ConversationSubjectAndCorrespondent?>()
+    var hasFragmentFirstOpenOccurred = false
 
     init {
         GlobalScope.launch {
@@ -24,4 +25,7 @@ class ConversationViewModel(private val conversationParentId: String, private va
     }
 
     fun getConversationMessages() = dataRepository.getConversationMessages(conversationParentId)
+    fun onFragmentFirstOpenOccurred() {
+        hasFragmentFirstOpenOccurred = true
+    }
 }
