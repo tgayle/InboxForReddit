@@ -1,5 +1,6 @@
 package app.tgayle.inboxforreddit.di.components
 
+import android.content.SharedPreferences
 import app.tgayle.inboxforreddit.InboxApplication
 import app.tgayle.inboxforreddit.db.AppDatabase
 import app.tgayle.inboxforreddit.db.repository.DataRepository
@@ -23,6 +24,7 @@ import retrofit2.Retrofit
 interface InboxApplicationComponent {
     fun retrofit(): Retrofit
     fun database(): AppDatabase
+    fun sharedPreferences(): SharedPreferences
     fun dataRepository(): DataRepository
     fun redditApiService(): RedditApiService
     fun redditHelper(): AccountHelper

@@ -14,12 +14,13 @@ class SplashFragmentViewModel(val dataRepository: DataRepository): ViewModel(), 
 
     init {
         GlobalScope.launch(Dispatchers.Main) {
-            val users = dataRepository.getUsersDeferred().await()
-            if (users.isEmpty()) {
+            val sharedPreferenceLastUser = dataRepository.getSharedPreferencesCurrentUser()
+            if (sharedPreferenceLastUser == null) {
                 Log.d("Splash", "Navigating to Login")
                 navigationDecision.value = R.id.action_splashFragment_to_loginFragment
             } else {
-                dataRepository.updateCurrentUser(dataRepository.getClientFromUser(users[0]).await())
+                val user = dataRepository.getClientFromUser(sharedPreferenceLastUser).await()
+                dataRepository.updateCurrentUser(user)
                 Log.d("Splash", "Navigating to Home")
                 navigationDecision.value = R.id.action_splashFragment_to_homeFragment
             }

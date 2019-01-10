@@ -1,14 +1,12 @@
 package app.tgayle.inboxforreddit.di.modules
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import app.tgayle.inboxforreddit.db.AppDatabase
-import app.tgayle.inboxforreddit.db.repository.DataRepository
 import app.tgayle.inboxforreddit.di.InboxApplicationScope
-import app.tgayle.inboxforreddit.network.RedditApiService
 import dagger.Module
 import dagger.Provides
-import net.dean.jraw.oauth.AccountHelper
 
 @Module(includes = [ContextModule::class])
 class DatabaseModule {
@@ -23,8 +21,7 @@ class DatabaseModule {
 
     @InboxApplicationScope
     @Provides
-    fun dataRepository(appDatabase: AppDatabase,
-                       accountHelper: AccountHelper,
-                       redditApiService: RedditApiService
-    ): DataRepository = DataRepository(appDatabase, accountHelper, redditApiService)
+    fun sharedPreferences(context: Context): SharedPreferences {
+        return context.getSharedPreferences("inbox_preferences", Context.MODE_PRIVATE)
+    }
 }

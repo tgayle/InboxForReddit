@@ -17,7 +17,7 @@ class BottomNavigationDrawerFragmentViewModel(val dataRepository: DataRepository
     fun onUserListClick(user: RedditUsernameAndUnreadMessageCount?) {
              GlobalScope.launch {
                  val userInfo = dataRepository.getClientFromUser(user!!.username).await()
-                 dataRepository.updateCurrentUser(userInfo)
+                 dataRepository.updateCurrentUser(userInfo, true)
                  actionDispatch.postValue(BottomNavigationDrawerAction.DISMISS)
              }
     }
@@ -39,7 +39,7 @@ class BottomNavigationDrawerFragmentViewModel(val dataRepository: DataRepository
                 if (accountToSwitchTo == null) {
                     TODO("Go back to login screen")
                 } else {
-                    dataRepository.updateCurrentUser(dataRepository.getClientFromUser(accountToSwitchTo).await())
+                    dataRepository.updateCurrentUser(dataRepository.getClientFromUser(accountToSwitchTo).await(), true)
                 }
             }
             dataRepository.removeUser(user?.username).await()

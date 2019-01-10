@@ -21,8 +21,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), InboxScreenModel {
-    var inboxViewState: InboxScreenStateArgs =
-        InboxScreenStateArgs()
+    var inboxViewState: InboxScreenStateArgs = InboxScreenStateArgs()
     private set
 
     val currentUser = dataRepository.getCurrentRedditUser()

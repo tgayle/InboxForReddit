@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 class ConversationViewModel(private val conversationParentId: String, private val dataRepository: DataRepository) : ViewModel() {
     val conversationInfo = MutableLiveData<ConversationSubjectAndCorrespondent?>()
     var hasFragmentFirstOpenOccurred = false
+    private set
 
     init {
         GlobalScope.launch {
