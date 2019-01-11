@@ -14,19 +14,14 @@ class MainActivityViewModel(val dataRepository: DataRepository): ViewModel(), Ma
 
     private val currentToolbarText = MutableLiveData<String>()
     private val toolbarScrollEnabled = MutableLiveData<Boolean>().default(true)
-    private val actionDispatch = MutableLiveData<MainActivityAction?>()
-
-    enum class MainActivityAction {
-        NAVIGATE_LOGIN,
-        RECREATE_ACTIVITY
-    }
+    private val actionDispatch = MutableLiveData<MainActivityState>()
 
     override fun onIntentOccurred(intent: Intent) {
     }
 
     fun getCurrentToolbarText(): LiveData<String> = currentToolbarText
     fun getToolbarScrollEnabled(): LiveData<Boolean> = toolbarScrollEnabled
-    fun getActionDispatch(): LiveData<MainActivityAction?> = actionDispatch
+    fun getActionDispatch(): LiveData<MainActivityState> = actionDispatch
 
     override fun requestToolbarTitleChange(title: String?) {
         if (title != null) {
@@ -40,15 +35,15 @@ class MainActivityViewModel(val dataRepository: DataRepository): ViewModel(), Ma
     }
 
     fun onActionAcknowledged() {
-        actionDispatch.value = null
+        actionDispatch.value = MainActivityState.EmptyState
     }
 
     override fun requestNavigateAddAccount() {
-        actionDispatch.value = MainActivityAction.NAVIGATE_LOGIN
+        actionDispatch.value = MainActivityState.NavigateLogin
     }
 
     fun themeChangeRequested() {
         nightModeEnabled = !nightModeEnabled
-        actionDispatch.value = MainActivityAction.RECREATE_ACTIVITY
+        actionDispatch.value = MainActivityState.RecreateActivity
     }
 }

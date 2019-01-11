@@ -16,8 +16,6 @@ import androidx.navigation.ui.setupWithNavController
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.db.repository.DataRepository
 import app.tgayle.inboxforreddit.screens.loginscreen.LoginScreenFragmentArgs
-import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel.MainActivityAction.NAVIGATE_LOGIN
-import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel.MainActivityAction.RECREATE_ACTIVITY
 import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragment
 import com.google.android.material.appbar.AppBarLayout
 import dagger.android.AndroidInjection
@@ -62,16 +60,16 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener,
         main_toolbar.setupWithNavController(navController, appBarConfiguration())
         main_toolbar.setOnClickListener {
             viewModel.themeChangeRequested()
-//            this.recreate()
         }
 
         viewModel.getActionDispatch().observe(this, Observer {
-            if (it == null) return@Observer
             when (it) {
-                NAVIGATE_LOGIN -> {
-                    navController.navigate(R.id.loginFragment, LoginScreenFragmentArgs.Builder().setPopBackStackAfterLogin(true).build().toBundle())
+                is MainActivityState.NavigateLogin -> {
+                    val args = LoginScreenFragmentArgs.Builder().setPopBackStackAfterLogin(true).build().toBundle()
+                    navController.navigate(R.id.loginFragment, args)
                 }
-                RECREATE_ACTIVITY -> recreate()
+                is MainActivityState.RecreateActivity -> recreate()
+                is MainActivityState.EmptyState -> return@Observer
             }
             viewModel.onActionAcknowledged()
         })
@@ -121,13 +119,11 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener,
     private fun hideWindowBarsAndFab() {
         main_toolbar.visibility = View.GONE
         home_bottom_bar.visibility = View.GONE
-//        home_fab.hide()
     }
 
     private fun showWindowBarsAndFab() {
         main_toolbar.visibility = View.VISIBLE
         home_bottom_bar.visibility = View.VISIBLE
-//        home_fab.show()
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentInjector
