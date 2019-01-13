@@ -17,7 +17,7 @@
 
         <androidx.appcompat.widget.Toolbar
                 android:background="?android:windowBackground"
-                app:titleTextColor="?android:textColor"
+                app:titleTextColor="?primaryTextColor"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll"

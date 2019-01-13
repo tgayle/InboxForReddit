@@ -7,10 +7,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColor">@color/defaultTextColor</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="actionMenuTextColor">@color/defaultTextColor</item>
+        <item name="primaryTextColor">@color/defaultTextColor</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>
 
@@ -18,7 +18,7 @@
         <item name="colorPrimary">@color/colorPrimary_dank</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_dank</item>
         <item name="colorAccent">@color/colorAccent_dank</item>
-        <item name="android:textColor">@color/defaultTextColor_dank</item>
+        <item name="primaryTextColor">@color/defaultTextColor_dank</item>
         <item name="actionMenuTextColor">@color/defaultTextColor_dank</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="android:windowBackground">@color/window_background_dank</item>

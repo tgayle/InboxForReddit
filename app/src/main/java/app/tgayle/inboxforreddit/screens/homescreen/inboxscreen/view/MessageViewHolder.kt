@@ -3,6 +3,7 @@ package app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.view
 import android.graphics.Typeface
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.model.RedditMessage
 import app.tgayle.inboxforreddit.util.getColorFromAttr
 import app.tgayle.inboxforreddit.util.getTimeAgo
@@ -30,7 +31,7 @@ class MessageViewHolder(override val containerView: View) : RecyclerView.ViewHol
             }
 
             val accentColor = itemView.context.getColorFromAttr(android.R.attr.colorAccent)
-            val defaultTextColor = itemView.context.getColorFromAttr(android.R.attr.textColor)
+            val defaultTextColor = itemView.context.getColorFromAttr(R.attr.primaryTextColor)
 
             if (unread) {
                 val bold = Typeface.DEFAULT_BOLD
