@@ -8,7 +8,7 @@ interface LoginScreenModel {
         fun goToLoginTab(webView: WebView)
     }
 
-    fun onLoginOccurred(link: String)
+    fun onLoginOccurred(link: String?)
     fun shouldPopBackStackOnFinish(bundleArgs: Bundle?): Boolean
 
 

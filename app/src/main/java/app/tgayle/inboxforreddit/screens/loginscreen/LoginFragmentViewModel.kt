@@ -17,14 +17,14 @@ class LoginFragmentViewModel(val dataRepository: DataRepository): ViewModel(), L
     val loginUrl = jrawAuthHelper.getAuthorizationUrl(true, true, *scopes)
     private val navigationDecisionMutable = MutableLiveData<LoginFragmentNavigation>()
 
-    override fun onLoginOccurred(link: String) {
-        if (jrawAuthHelper.isFinalRedirectUrl(link)) {
-            navigationDecisionMutable.value = LoginFragmentNavigation.LOADING
+    override fun onLoginOccurred(link: String?) {
+        if (link != null && jrawAuthHelper.isFinalRedirectUrl(link)) {
+            navigationDecisionMutable.value = LoginFragmentNavigation.Loading
             GlobalScope.launch(Dispatchers.Main) {
                 val redditClient = attemptLogin(link).await()
                 val redditAccount = dataRepository.saveUser(redditClient).await()
                 dataRepository.updateCurrentUser(RedditClientAccountPair(redditClient, redditAccount))
-                navigationDecisionMutable.value = LoginFragmentNavigation.HOME
+                navigationDecisionMutable.value = LoginFragmentNavigation.NavigateHome
             }
         }
     }
@@ -44,11 +44,5 @@ class LoginFragmentViewModel(val dataRepository: DataRepository): ViewModel(), L
     }
 
     fun getNavigationDecision(): LiveData<LoginFragmentNavigation> = navigationDecisionMutable
-
-    enum class LoginFragmentNavigation {
-        HOME,
-        LOGIN,
-        LOADING
-    }
 
 }

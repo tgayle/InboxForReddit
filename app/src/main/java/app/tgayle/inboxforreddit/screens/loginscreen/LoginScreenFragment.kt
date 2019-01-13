@@ -51,9 +51,11 @@ class LoginScreenFragment : BaseFragment(), LoginScreenModel.Listener {
         viewModel.getNavigationDecision().observe(viewLifecycleOwner, Observer {
             when (it) {
                 null -> Log.d("Login", "Nav decision currently null.")
-                LoginFragmentViewModel.LoginFragmentNavigation.HOME -> findNavController().navigate(LoginScreenFragmentDirections.actionLoginFragmentToHomeFragment())
-                LoginFragmentViewModel.LoginFragmentNavigation.LOGIN -> {}
-                LoginFragmentViewModel.LoginFragmentNavigation.LOADING -> {
+                LoginFragmentNavigation.NavigateHome -> {
+                    findNavController().navigate(LoginScreenFragmentDirections.actionLoginFragmentToHomeFragment())
+                }
+                LoginFragmentNavigation.Login -> {}
+                LoginFragmentNavigation.Loading -> {
                     loginWebview.visibility = View.GONE
                     loginFragmentText.text = "Loading..."
                 }
@@ -61,10 +63,10 @@ class LoginScreenFragment : BaseFragment(), LoginScreenModel.Listener {
         })
     }
 
-    fun setLoginWebviewListener(webView: WebView) {
+    private fun setLoginWebviewListener(webView: WebView) {
         webView.webViewClient = object: WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                viewModel.onLoginOccurred(url!!)
+                viewModel.onLoginOccurred(url)
             }
         }
     }
