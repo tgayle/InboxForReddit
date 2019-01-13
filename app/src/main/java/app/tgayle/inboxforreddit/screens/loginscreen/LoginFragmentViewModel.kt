@@ -15,18 +15,20 @@ class LoginFragmentViewModel(val dataRepository: DataRepository): ViewModel(), L
     private val jrawAuthHelper = AppSingleton.redditHelper.switchToNewUser()
     private val scopes = arrayOf("modmail", "modlog", "read", "privatemessages", "report", "identity")
     val loginUrl = jrawAuthHelper.getAuthorizationUrl(true, true, *scopes)
-    private val navigationDecisionMutable = MutableLiveData<LoginFragmentNavigation>()
+    private val navigationDecisionMutable = MutableLiveData<LoginFragmentState>()
 
-    override fun onLoginOccurred(link: String?) {
+    override fun isValidAuthorizationLink(link: String?): Boolean {
         if (link != null && jrawAuthHelper.isFinalRedirectUrl(link)) {
-            navigationDecisionMutable.value = LoginFragmentNavigation.Loading
+            navigationDecisionMutable.value = LoginFragmentState.Loading
             GlobalScope.launch(Dispatchers.Main) {
                 val redditClient = attemptLogin(link).await()
                 val redditAccount = dataRepository.saveUser(redditClient).await()
                 dataRepository.updateCurrentUser(RedditClientAccountPair(redditClient, redditAccount))
-                navigationDecisionMutable.value = LoginFragmentNavigation.NavigateHome
+                navigationDecisionMutable.value = LoginFragmentState.NavigateHome
             }
+            return true
         }
+        return false
     }
 
     override fun shouldPopBackStackOnFinish(bundleArgs: Bundle?): Boolean {
@@ -43,6 +45,6 @@ class LoginFragmentViewModel(val dataRepository: DataRepository): ViewModel(), L
             }
     }
 
-    fun getNavigationDecision(): LiveData<LoginFragmentNavigation> = navigationDecisionMutable
+    fun getNavigationDecision(): LiveData<LoginFragmentState> = navigationDecisionMutable
 
 }

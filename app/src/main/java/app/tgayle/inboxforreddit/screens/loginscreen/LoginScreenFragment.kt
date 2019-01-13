@@ -8,9 +8,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -28,6 +30,8 @@ class LoginScreenFragment : BaseFragment(), LoginScreenModel.Listener {
     lateinit var activityViewModel: MainActivityViewModel
     lateinit var viewModel: LoginFragmentViewModel
     @Inject lateinit var dataRepository: DataRepository
+
+    var loadingAnimationInProgress = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModelFactory = LoginFragmentViewModelFactory(dataRepository)
@@ -51,22 +55,52 @@ class LoginScreenFragment : BaseFragment(), LoginScreenModel.Listener {
         viewModel.getNavigationDecision().observe(viewLifecycleOwner, Observer {
             when (it) {
                 null -> Log.d("Login", "Nav decision currently null.")
-                LoginFragmentNavigation.NavigateHome -> {
-                    findNavController().navigate(LoginScreenFragmentDirections.actionLoginFragmentToHomeFragment())
-                }
-                LoginFragmentNavigation.Login -> {}
-                LoginFragmentNavigation.Loading -> {
-                    loginWebview.visibility = View.GONE
-                    loginFragmentText.text = "Loading..."
-                }
+                LoginFragmentState.NavigateHome -> if (!loadingAnimationInProgress) navigateIfStateAllows()
+                LoginFragmentState.Login -> {}
+                LoginFragmentState.Loading -> showLoadingText()
             }
         })
+    }
+
+    private fun showLoadingText() {
+        loadingAnimationInProgress = true
+
+        loginWebview.animate()
+            .setDuration(500)
+            .setInterpolator(FastOutSlowInInterpolator())
+            .alpha(0f)
+            .withEndAction {
+                loginWebview.visibility = View.GONE
+                loginFragmentLoadingLayout.visibility = View.VISIBLE
+                loginFragmentLoadingLayout.animate()
+                    .setDuration(450)
+                    .alpha(1f)
+                    .setInterpolator(LinearInterpolator())
+                    .withEndAction {
+                        loginFragmentText.animate()
+                            .alpha(1f)
+                            .setInterpolator(FastOutSlowInInterpolator())
+                            .setDuration(500)
+                            .withEndAction {
+                                loadingAnimationInProgress = false
+                                navigateIfStateAllows()
+                            }
+                    }
+            }
+    }
+
+    private fun navigateIfStateAllows() {
+        if (viewModel.getNavigationDecision().value is LoginFragmentState.NavigateHome) {
+            findNavController().navigate(LoginScreenFragmentDirections.actionLoginFragmentToHomeFragment())
+        }
     }
 
     private fun setLoginWebviewListener(webView: WebView) {
         webView.webViewClient = object: WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                viewModel.onLoginOccurred(url)
+                if (viewModel.isValidAuthorizationLink(url)) {
+                    view?.stopLoading()
+                }
             }
         }
     }
