@@ -20,11 +20,21 @@ class UserRepository @Inject constructor(private val appDatabase: AppDatabase,
                                          private val accountHelper: AccountHelper,
                                          private val sharedPreferences: SharedPreferences) {
     private val redditClient = MutableLiveData<RedditClientAccountPair>()
+    var nightModeActive: Boolean = false
+    set(value) {
+        sharedPreferences.edit(commit = true) {
+            putBoolean(SHARED_PREF_CURRENT_THEME, value)
+        }
+        Log.d("User Repo", "Night theme enabled set to ${sharedPreferences.getBoolean(SHARED_PREF_CURRENT_THEME, false)}")
+        field = value
+    }
 
     /*
     Load shared preferences user on initialization.
      */
     init {
+        nightModeActive = sharedPreferences.getBoolean(SHARED_PREF_CURRENT_THEME, false)
+
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
                 val client = getClientFromUser(sharedPreferences.getString(CURRENT_USER, null)).await()
@@ -64,7 +74,7 @@ class UserRepository @Inject constructor(private val appDatabase: AppDatabase,
         if (updateSharedPreferences) {
             sharedPreferences.edit(commit = true) {
                 putString(CURRENT_USER, newUser.account?.name)
-                Log.d("Data Repo", "Current user updated to ${newUser.account?.name}")
+                Log.d("User Repo", "Current user updated to ${newUser.account?.name}")
             }
         }
     }
@@ -110,5 +120,6 @@ class UserRepository @Inject constructor(private val appDatabase: AppDatabase,
 
     companion object {
         const val CURRENT_USER = "currentUser"
+        const val SHARED_PREF_CURRENT_THEME = "nightModeActive"
     }
 }

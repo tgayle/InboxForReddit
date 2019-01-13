@@ -20,8 +20,8 @@ import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.db.repository.MessageRepository
 import app.tgayle.inboxforreddit.db.repository.UserRepository
 import app.tgayle.inboxforreddit.screens.BaseFragment
+import app.tgayle.inboxforreddit.screens.mainactivity.MainActivity
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
-import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import kotlinx.android.synthetic.main.fragment_login.*
 import net.dean.jraw.oauth.AccountHelper
 import javax.inject.Inject
@@ -39,7 +39,7 @@ class LoginScreenFragment : BaseFragment(), LoginScreenModel.Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModelFactory = LoginFragmentViewModelFactory(userRepository, accountHelper)
-        activityViewModel = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(messageRepository)).get(MainActivityViewModel::class.java)
+        activityViewModel = ViewModelProviders.of(activity!!, (activity as MainActivity).vmFactory).get(MainActivityViewModel::class.java)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(LoginFragmentViewModel::class.java)
         super.onCreate(savedInstanceState)
     }

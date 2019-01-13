@@ -13,8 +13,8 @@ import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.db.repository.MessageRepository
 import app.tgayle.inboxforreddit.db.repository.UserRepository
 import app.tgayle.inboxforreddit.screens.BaseFragment
+import app.tgayle.inboxforreddit.screens.mainactivity.MainActivity
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
-import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -31,13 +31,13 @@ class SplashFragment : BaseFragment(), SplashScreenModel.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         vmFactory = SplashFragmentViewModelFactory(userRepository)
         viewModel = ViewModelProviders.of(this, vmFactory).get(SplashFragmentViewModel::class.java)
-        activityVm = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(messageRepository)).get(MainActivityViewModel::class.java)
+        activityVm = ViewModelProviders.of(activity!!, (activity as MainActivity).vmFactory).get(MainActivityViewModel::class.java)
         super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_splash, container, false)
-
+        activityVm.requestUpdateToolbarVisibility(false)
         listenForNavigation()
         return view
     }

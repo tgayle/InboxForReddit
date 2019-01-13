@@ -6,10 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.tgayle.inboxforreddit.db.repository.MessageRepository
+import app.tgayle.inboxforreddit.db.repository.UserRepository
 import app.tgayle.inboxforreddit.util.default
 
-class MainActivityViewModel(val messageRepository: MessageRepository): ViewModel(), MainActivityModel {
-    var nightModeEnabled = false
+class MainActivityViewModel(val messageRepository: MessageRepository, val userRepository: UserRepository): ViewModel(), MainActivityModel {
+    var nightModeEnabled = userRepository.nightModeActive
     private set
 
     private val currentToolbarText = MutableLiveData<String>()
@@ -43,7 +44,12 @@ class MainActivityViewModel(val messageRepository: MessageRepository): ViewModel
     }
 
     fun themeChangeRequested() {
-        nightModeEnabled = !nightModeEnabled
+        userRepository.nightModeActive = !nightModeEnabled
+        nightModeEnabled = userRepository.nightModeActive
         actionDispatch.value = MainActivityState.RecreateActivity
+    }
+
+    fun requestUpdateToolbarVisibility(visible: Boolean) {
+        actionDispatch.value = MainActivityState.UpdateToolbarVisibility(visible)
     }
 }

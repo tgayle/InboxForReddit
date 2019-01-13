@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModelProviders
 import app.tgayle.inboxforreddit.db.repository.MessageRepository
 import app.tgayle.inboxforreddit.db.repository.UserRepository
 import app.tgayle.inboxforreddit.screens.BaseFragment
+import app.tgayle.inboxforreddit.screens.mainactivity.MainActivity
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
-import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import javax.inject.Inject
 
 /**
@@ -25,7 +25,7 @@ abstract class BaseHomeScreenFragment: BaseFragment() {
             .get(HomeFragmentViewModel::class.java)
 
         activityViewModel = ViewModelProviders
-            .of(activity!!, MainActivityViewModelFactory(messageRepository))
+            .of(activity!!, (activity as MainActivity).vmFactory)
             .get(MainActivityViewModel::class.java)
     }
 }

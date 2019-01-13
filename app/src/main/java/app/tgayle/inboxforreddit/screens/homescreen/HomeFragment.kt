@@ -11,8 +11,8 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.db.repository.MessageRepository
+import app.tgayle.inboxforreddit.screens.mainactivity.MainActivity
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
-import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -23,7 +23,7 @@ class HomeFragment : NavHostFragment() {
     @Inject lateinit var messageRepository: MessageRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        activityViewModel = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(messageRepository)).get(
+        activityViewModel = ViewModelProviders.of(activity!!, (activity as MainActivity).vmFactory).get(
             MainActivityViewModel::class.java)
         viewModelFactory = HomeFragmentViewModelFactory(messageRepository)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeFragmentViewModel::class.java)
@@ -40,7 +40,6 @@ class HomeFragment : NavHostFragment() {
     fun setupViews(view: View) {
         val homeScreenNavHostView = view.findViewById<View>(R.id.home_fragment_navhost)
         val homeScreenNavHost = Navigation.findNavController(homeScreenNavHostView)
-        //TODO:  Bottom NavView
         //TODO:  Toolbar Button Functionality
     }
 
