@@ -5,10 +5,9 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import app.tgayle.inboxforreddit.model.RedditMessage
 import app.tgayle.inboxforreddit.util.getColorFromAttr
+import app.tgayle.inboxforreddit.util.getTimeAgo
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.message_rv_item.*
-import java.text.SimpleDateFormat
-
 
 
 typealias OnMessageClickListener = (message: RedditMessage) -> Unit
@@ -22,7 +21,7 @@ class MessageViewHolder(override val containerView: View) : RecyclerView.ViewHol
 
         redditMessage.run {
             message_rv_item_author.text = correspondent
-            message_rv_item_date.text = SimpleDateFormat.getDateInstance().format(created)
+            message_rv_item_date.text = getTimeAgo(created.time)
             message_rv_item_message.text = body
             message_rv_item_subject.text = subject
             message_rv_item_sentreceived.rotation = if (owner == author) 0F else 180F
