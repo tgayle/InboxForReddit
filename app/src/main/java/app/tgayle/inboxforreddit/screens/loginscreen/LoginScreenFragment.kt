@@ -17,11 +17,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import app.tgayle.inboxforreddit.R
-import app.tgayle.inboxforreddit.db.repository.DataRepository
+import app.tgayle.inboxforreddit.db.repository.MessageRepository
+import app.tgayle.inboxforreddit.db.repository.UserRepository
 import app.tgayle.inboxforreddit.screens.BaseFragment
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import kotlinx.android.synthetic.main.fragment_login.*
+import net.dean.jraw.oauth.AccountHelper
 import javax.inject.Inject
 
 
@@ -29,13 +31,15 @@ class LoginScreenFragment : BaseFragment(), LoginScreenModel.Listener {
     lateinit var viewModelFactory: LoginFragmentViewModelFactory
     lateinit var activityViewModel: MainActivityViewModel
     lateinit var viewModel: LoginFragmentViewModel
-    @Inject lateinit var dataRepository: DataRepository
+    @Inject lateinit var userRepository: UserRepository
+    @Inject lateinit var messageRepository: MessageRepository
+    @Inject lateinit var accountHelper: AccountHelper
 
     var loadingAnimationInProgress = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModelFactory = LoginFragmentViewModelFactory(dataRepository)
-        activityViewModel = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(dataRepository)).get(MainActivityViewModel::class.java)
+        viewModelFactory = LoginFragmentViewModelFactory(userRepository, accountHelper)
+        activityViewModel = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(messageRepository)).get(MainActivityViewModel::class.java)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(LoginFragmentViewModel::class.java)
         super.onCreate(savedInstanceState)
     }

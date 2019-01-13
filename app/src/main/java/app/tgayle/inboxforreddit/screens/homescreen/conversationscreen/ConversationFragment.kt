@@ -25,7 +25,7 @@ class ConversationFragment : BaseHomeScreenFragment() {
         val conversationParentName = arguments?.getString("parentName")
             ?: throw IllegalArgumentException("Required conversation parent name was null")
 
-        vmFactory = ConversationViewModelFactory(conversationParentName, dataRepository)
+        vmFactory = ConversationViewModelFactory(conversationParentName, messageRepository)
         viewModel = ViewModelProviders.of(this, vmFactory).get(ConversationViewModel::class.java)
     }
 

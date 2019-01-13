@@ -1,5 +1,6 @@
 package app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -8,28 +9,33 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import app.tgayle.inboxforreddit.AppSingleton
 import app.tgayle.inboxforreddit.R
+import app.tgayle.inboxforreddit.db.repository.UserRepository
+import app.tgayle.inboxforreddit.screens.mainactivity.MainActivity
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
-import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragmentViewModel.BottomNavigationDrawerAction.DISMISS
 import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragmentViewModel.BottomNavigationDrawerAction.NOTIFY_MAIN_ACTIVITY_FOR_ADD_ACCOUNT
 import app.tgayle.inboxforreddit.util.getColorFromAttr
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.navigation.NavigationView
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.main_bottom_nav_drawer.*
+import javax.inject.Inject
 
 
 class BottomNavigationDrawerFragment: BottomSheetDialogFragment(), NavigationView.OnNavigationItemSelectedListener {
-    private val vmFactory = BottomNavigationDrawerFragmentViewModelFactory(AppSingleton.dataRepository)
-    lateinit var activityVm: MainActivityViewModel
-    lateinit var viewModel: BottomNavigationDrawerFragmentViewModel
-    val usersAdapter by lazy { UserListAdapter() }
-    lateinit var layoutManager: LinearLayoutManager
+    @Inject lateinit var userRepository: UserRepository
+    private lateinit var activityVm: MainActivityViewModel
+    private lateinit var viewModel: BottomNavigationDrawerFragmentViewModel
+    private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var vmFactory: BottomNavigationDrawerFragmentViewModelFactory
+
+    private val usersAdapter by lazy { UserListAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityVm = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(AppSingleton.dataRepository)).get(MainActivityViewModel::class.java)
+        vmFactory = BottomNavigationDrawerFragmentViewModelFactory(userRepository)
+        activityVm = ViewModelProviders.of(activity!!, (activity!! as MainActivity).vmFactory).get(MainActivityViewModel::class.java)
         viewModel = ViewModelProviders.of(this, vmFactory).get(BottomNavigationDrawerFragmentViewModel::class.java)
         layoutManager = LinearLayoutManager(context)
     }
@@ -89,5 +95,10 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment(), NavigationVie
             }
             else -> false
         }
+    }
+
+    override fun onAttach(context: Context?) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
     }
 }

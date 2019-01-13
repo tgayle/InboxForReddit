@@ -14,7 +14,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import app.tgayle.inboxforreddit.R
-import app.tgayle.inboxforreddit.db.repository.DataRepository
+import app.tgayle.inboxforreddit.db.repository.MessageRepository
 import app.tgayle.inboxforreddit.screens.loginscreen.LoginScreenFragmentArgs
 import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragment
 import com.google.android.material.appbar.AppBarLayout
@@ -31,12 +31,12 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener,
     lateinit var vmFactory: MainActivityViewModelFactory
     lateinit var viewModel: MainActivityViewModel
     lateinit var navController: NavController
-    @Inject lateinit var dataRepository: DataRepository
+    @Inject lateinit var messageRepository: MessageRepository
     @Inject lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
-        vmFactory = MainActivityViewModelFactory(dataRepository)
+        vmFactory = MainActivityViewModelFactory(messageRepository)
         viewModel = ViewModelProviders.of(this, vmFactory).get(MainActivityViewModel::class.java)
         this.setTheme(if (viewModel.nightModeEnabled) R.style.DankTheme else R.style.InboxTheme)
         // TODO: Persist night node

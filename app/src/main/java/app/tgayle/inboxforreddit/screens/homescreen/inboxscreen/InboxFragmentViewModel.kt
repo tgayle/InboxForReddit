@@ -7,7 +7,8 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import app.tgayle.inboxforreddit.R
-import app.tgayle.inboxforreddit.db.repository.DataRepository
+import app.tgayle.inboxforreddit.db.repository.MessageRepository
+import app.tgayle.inboxforreddit.db.repository.UserRepository
 import app.tgayle.inboxforreddit.model.MessageFilterOption
 import app.tgayle.inboxforreddit.model.RedditAccount
 import app.tgayle.inboxforreddit.model.RedditClientAccountPair
@@ -20,11 +21,12 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), InboxScreenModel {
+class InboxFragmentViewModel(private val messageRepository: MessageRepository,
+                             userRepository: UserRepository) : ViewModel(), InboxScreenModel {
     var inboxViewState: InboxScreenStateArgs = InboxScreenStateArgs()
     private set
 
-    val currentUser = dataRepository.getCurrentRedditUser()
+    val currentUser = userRepository.getCurrentRedditUser()
     private val isRefreshing = MutableLiveData<Boolean>()
     private val currentMessageFilter = MutableLiveData<MessageFilterOption>().default(MessageFilterOption.INBOX)
     private val actionDispatcher = MutableLiveData<Pair<InboxFragmentAction, RedditMessage?>?>()
@@ -32,14 +34,14 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
     private var lastRefresh: Date? = null
     private val timeBetweenAutomaticRefresh = TimeUnit.SECONDS.toMillis(30)
 
-    override fun getInbox(user: LiveData<RedditAccount>): LiveData<List<RedditMessage>> = dataRepository.getInbox(user)
-    fun getUserMessages(user: LiveData<RedditClientAccountPair>) = dataRepository.getMessages(user)
+    override fun getInbox(user: LiveData<RedditAccount>): LiveData<List<RedditMessage>> = messageRepository.getInbox(user)
+    fun getUserMessages(user: LiveData<RedditClientAccountPair>) = messageRepository.getMessages(user)
     fun getRefreshing(): LiveData<Boolean> = isRefreshing
     fun getActionDispatch(): LiveData<Pair<InboxFragmentAction, RedditMessage?>?> = actionDispatcher
 
     fun getInboxFromClientAndAccount(user: LiveData<RedditClientAccountPair>): LiveData<PagedList<RedditMessage>> {
         return Transformations.switchMap(currentMessageFilter) {
-            dataRepository.getMessagesFromClientAndAccountPaging(it, user)
+            messageRepository.getMessagesFromClientAndAccountPaging(it, user)
         }
     }
 
@@ -72,7 +74,7 @@ class InboxFragmentViewModel(val dataRepository: DataRepository) : ViewModel(), 
             Log.d("Inbox", "Send refresh request.")
             isRefreshing.value = true
             withContext(Dispatchers.Default) {
-                dataRepository.refreshMessages(user.client, user.account!!)
+                messageRepository.refreshMessages(user.client, user.account!!)
             }
             isRefreshing.value = false
             lastRefresh = currentTime

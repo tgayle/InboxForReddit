@@ -1,10 +1,7 @@
 package app.tgayle.inboxforreddit.db.repository
 
-import android.content.SharedPreferences
 import android.util.Log
-import androidx.core.content.edit
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -14,81 +11,17 @@ import app.tgayle.inboxforreddit.model.MessageFilterOption
 import app.tgayle.inboxforreddit.model.RedditAccount
 import app.tgayle.inboxforreddit.model.RedditClientAccountPair
 import app.tgayle.inboxforreddit.model.RedditMessage
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import net.dean.jraw.RedditClient
 import net.dean.jraw.models.Message
-import net.dean.jraw.oauth.AccountHelper
 import java.util.*
 import javax.inject.Inject
 
 @InboxApplicationScope
-class DataRepository @Inject constructor(private val appDatabase: AppDatabase,
-                     private val accountHelper: AccountHelper,
-                     private val sharedPreferences: SharedPreferences) {
-
-    private val redditClient = MutableLiveData<RedditClientAccountPair>()
-
-    /*
-    Load shared preferences user on initialization.
-     */
-    init {
-        GlobalScope.launch {
-            withContext(Dispatchers.IO) {
-                val client = getClientFromUser(sharedPreferences.getString(CURRENT_USER, null)).await()
-                redditClient.postValue(client)
-            }
-        }
-    }
-
-    fun getCurrentRedditUser(): LiveData<RedditClientAccountPair> = redditClient
-
-    fun getUsers() = appDatabase.accounts().getAllUsers()
-
-    fun getUsersDeferred() = GlobalScope.async(Dispatchers.IO ) {
-        return@async appDatabase.accounts().getAllSync()
-    }
-
-    /**
-     * Retrieves relevant user information from Reddit then saves the user locally. Runs asynchronously.
-     * @param user A JRAW client containing user information.
-     */
-    fun saveUser(user: RedditClient) = GlobalScope.async {
-        val account = user.me().query().account
-        if (account != null) {
-            appDatabase.accounts().saveUser(RedditAccount(account.uniqueId, account.name, account.created, user.authManager.refreshToken!!))
-            return@async appDatabase.accounts().getUserSync(account.name)!!
-        } else {
-            throw RuntimeException("Tried to save a user but account was null: ${user.requireAuthenticatedUser()}")
-        }
-    }
-
-    /**
-     * Updates the repository's current user.
-     * @param newUser
-     */
-    fun updateCurrentUser(newUser: RedditClientAccountPair, updateSharedPreferences: Boolean = true) {
-        redditClient.postValue(newUser)
-        if (updateSharedPreferences) {
-            sharedPreferences.edit(commit = true) {
-                putString(CURRENT_USER, newUser.account?.name)
-                Log.d("Data Repo", "Current user updated to ${newUser.account?.name}")
-            }
-        }
-    }
-
-    /**
-     * Retrieves local user information and returns it along with a client for making requests with that user.
-     * @param name The name of the user to retrive a client for.
-     */
-    fun getClientFromUser(name: String?) = GlobalScope.async {
-        val client = if (name == null) null else accountHelper.switchToUser(name)
-        return@async RedditClientAccountPair(client, appDatabase.accounts().getUserSync(name))
-    }
-
-    /**
-     * @see getClientFromUser(String)
-     */
-    fun getClientFromUser(user: RedditAccount) = getClientFromUser(user.name)
+class MessageRepository @Inject constructor(private val appDatabase: AppDatabase) {
 
     /**
      * Saves a list of messages locally.
@@ -263,7 +196,8 @@ class DataRepository @Inject constructor(private val appDatabase: AppDatabase,
         }
     }
 
-    fun getMessagesFromClientAndAccountPaging(filterOption: MessageFilterOption?, user: LiveData<RedditClientAccountPair>): LiveData<PagedList<RedditMessage>> {
+    fun getMessagesFromClientAndAccountPaging(filterOption: MessageFilterOption?,
+                                              user: LiveData<RedditClientAccountPair>): LiveData<PagedList<RedditMessage>> {
         return Transformations.switchMap(user) {
             val username = it.account?.name
             val sourceDataSource = when (filterOption) {
@@ -277,25 +211,6 @@ class DataRepository @Inject constructor(private val appDatabase: AppDatabase,
         }
     }
 
-    fun getUsersAndUnreadMessageCountForEach() = LivePagedListBuilder(appDatabase.messages().getUsernamesAndUnreadMessageCountsForEach(), 5).build()
-
-    /**
-     * Returns a [RedditAccount] from the local database or null if the user doesn't exist. Runs synchronously and must
-     * be run on another thread.
-     * @param username The name of the user to retrieve.
-     */
-    fun getUserSync(username: String?): RedditAccount? = appDatabase.accounts().getUserSync(username)
-
-    /**
-     * Removes a given user from the local database and all their messages.
-     * @param username The name of the user to be removed.
-     */
-    fun removeUser(username: String?) = GlobalScope.async {
-        if (username == null) return@async
-        appDatabase.accounts().removeUserByName(username)
-        appDatabase.messages().removeMessagesWithOwner(username)
-    }
-
     fun getConversationMessages(conversationParentName: String): LiveData<PagedList<RedditMessage>> {
         return LivePagedListBuilder(
             appDatabase.messages().getConversationMessages(conversationParentName), 15
@@ -306,14 +221,6 @@ class DataRepository @Inject constructor(private val appDatabase: AppDatabase,
      * Returns the oldest message for a conversation.
      * @param conversationParentName The first_message_name to find the oldest message for.
      */
-    fun getFirstMessageOfConversation(conversationParentName: String?) = appDatabase.messages().getFirstMessageOfConversation(conversationParentName)
-
-    /**
-     * Returns the currentUser from shared preferences, or null if none is set.
-     */
-    fun getSharedPreferencesCurrentUser(): String? = sharedPreferences.getString(CURRENT_USER, null)
-
-    companion object {
-        const val CURRENT_USER = "currentUser"
-    }
+    fun getFirstMessageOfConversation(conversationParentName: String?) = appDatabase.messages()
+        .getFirstMessageOfConversation(conversationParentName)
 }

@@ -24,7 +24,7 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
         setHasOptionsMenu(true)
 
         viewModel = ViewModelProviders
-            .of(this, InboxFragmentViewModelFactory(dataRepository))
+            .of(this, InboxFragmentViewModelFactory(messageRepository, userRepository))
             .get(InboxFragmentViewModel::class.java)
         super.onCreate(savedInstanceState)
     }

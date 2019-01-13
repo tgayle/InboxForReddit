@@ -5,10 +5,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import app.tgayle.inboxforreddit.db.repository.DataRepository
+import app.tgayle.inboxforreddit.db.repository.MessageRepository
 import app.tgayle.inboxforreddit.util.default
 
-class MainActivityViewModel(val dataRepository: DataRepository): ViewModel(), MainActivityModel {
+class MainActivityViewModel(val messageRepository: MessageRepository): ViewModel(), MainActivityModel {
     var nightModeEnabled = false
     private set
 

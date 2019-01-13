@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import app.tgayle.inboxforreddit.R
-import app.tgayle.inboxforreddit.db.repository.DataRepository
+import app.tgayle.inboxforreddit.db.repository.MessageRepository
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -20,12 +20,12 @@ class HomeFragment : NavHostFragment() {
     lateinit var activityViewModel: MainActivityViewModel
     lateinit var viewModelFactory: HomeFragmentViewModelFactory
     lateinit var viewModel: HomeFragmentViewModel
-    @Inject lateinit var dataRepository: DataRepository
+    @Inject lateinit var messageRepository: MessageRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        activityViewModel = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(dataRepository)).get(
+        activityViewModel = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(messageRepository)).get(
             MainActivityViewModel::class.java)
-        viewModelFactory = HomeFragmentViewModelFactory(dataRepository)
+        viewModelFactory = HomeFragmentViewModelFactory(messageRepository)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeFragmentViewModel::class.java)
 
         super.onCreate(savedInstanceState)

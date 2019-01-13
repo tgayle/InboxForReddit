@@ -3,7 +3,7 @@ package app.tgayle.inboxforreddit.di.components
 import android.content.SharedPreferences
 import app.tgayle.inboxforreddit.InboxApplication
 import app.tgayle.inboxforreddit.db.AppDatabase
-import app.tgayle.inboxforreddit.db.repository.DataRepository
+import app.tgayle.inboxforreddit.db.repository.MessageRepository
 import app.tgayle.inboxforreddit.di.InboxApplicationScope
 import app.tgayle.inboxforreddit.di.modules.DatabaseModule
 import app.tgayle.inboxforreddit.di.modules.NetworkModule
@@ -25,7 +25,7 @@ interface InboxApplicationComponent {
     fun retrofit(): Retrofit
     fun database(): AppDatabase
     fun sharedPreferences(): SharedPreferences
-    fun dataRepository(): DataRepository
+    fun dataRepository(): MessageRepository
     fun redditApiService(): RedditApiService
     fun redditHelper(): AccountHelper
     fun inject(application: InboxApplication)

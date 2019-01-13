@@ -5,6 +5,7 @@ import app.tgayle.inboxforreddit.screens.homescreen.conversationscreen.Conversat
 import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.InboxFragment
 import app.tgayle.inboxforreddit.screens.homescreen.replyscreen.ReplyConversationFragment
 import app.tgayle.inboxforreddit.screens.loginscreen.LoginScreenFragment
+import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragment
 import app.tgayle.inboxforreddit.screens.splashscreen.SplashFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -28,4 +29,7 @@ abstract class FragmentBuilder {
 
     @ContributesAndroidInjector
     abstract fun contributeSplashFragment(): SplashFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeBottomNavigationDrawerFragment(): BottomNavigationDrawerFragment
 }

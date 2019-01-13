@@ -10,7 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import app.tgayle.inboxforreddit.R
-import app.tgayle.inboxforreddit.db.repository.DataRepository
+import app.tgayle.inboxforreddit.db.repository.MessageRepository
+import app.tgayle.inboxforreddit.db.repository.UserRepository
 import app.tgayle.inboxforreddit.screens.BaseFragment
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModelFactory
@@ -24,12 +25,13 @@ class SplashFragment : BaseFragment(), SplashScreenModel.Listener {
     lateinit var vmFactory: SplashFragmentViewModelFactory
     lateinit var viewModel: SplashFragmentViewModel
     lateinit var activityVm: MainActivityViewModel
-    @Inject lateinit var dataRepository: DataRepository
+    @Inject lateinit var userRepository: UserRepository
+    @Inject lateinit var messageRepository: MessageRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        vmFactory = SplashFragmentViewModelFactory(dataRepository)
+        vmFactory = SplashFragmentViewModelFactory(userRepository)
         viewModel = ViewModelProviders.of(this, vmFactory).get(SplashFragmentViewModel::class.java)
-        activityVm = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(dataRepository)).get(MainActivityViewModel::class.java)
+        activityVm = ViewModelProviders.of(activity!!, MainActivityViewModelFactory(messageRepository)).get(MainActivityViewModel::class.java)
         super.onCreate(savedInstanceState)
     }
 
