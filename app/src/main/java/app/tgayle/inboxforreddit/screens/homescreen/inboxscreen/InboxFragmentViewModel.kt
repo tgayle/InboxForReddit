@@ -29,7 +29,7 @@ class InboxFragmentViewModel(private val messageRepository: MessageRepository,
     val currentUser = userRepository.getCurrentRedditUser()
     private val isRefreshing = MutableLiveData<Boolean>()
     private val currentMessageFilter = MutableLiveData<MessageFilterOption>().default(MessageFilterOption.INBOX)
-    private val actionDispatcher = MutableLiveData<Pair<InboxFragmentAction, RedditMessage?>?>()
+    private val viewState = MutableLiveData<InboxFragmentState?>()
 
     private var lastRefresh: Date? = null
     private val timeBetweenAutomaticRefresh = TimeUnit.SECONDS.toMillis(30)
@@ -37,7 +37,7 @@ class InboxFragmentViewModel(private val messageRepository: MessageRepository,
     override fun getInbox(user: LiveData<RedditAccount>): LiveData<List<RedditMessage>> = messageRepository.getInbox(user)
     fun getUserMessages(user: LiveData<RedditClientAccountPair>) = messageRepository.getMessages(user)
     fun getRefreshing(): LiveData<Boolean> = isRefreshing
-    fun getActionDispatch(): LiveData<Pair<InboxFragmentAction, RedditMessage?>?> = actionDispatcher
+    fun getState(): LiveData<InboxFragmentState?> = viewState
 
     fun getInboxFromClientAndAccount(user: LiveData<RedditClientAccountPair>): LiveData<PagedList<RedditMessage>> {
         return Transformations.switchMap(currentMessageFilter) {
@@ -48,11 +48,11 @@ class InboxFragmentViewModel(private val messageRepository: MessageRepository,
     fun getCurrentFilterTitle() = Transformations.map(currentMessageFilter) { it.name.toLowerCase().capitalize() }
 
     override fun onMessageClicked(message: RedditMessage) {
-        actionDispatcher.value = Pair(InboxFragmentAction.NAVIGATE_TO_CONVERSATION, message)
+        viewState.value = InboxFragmentState.NavigateConversation(message)
     }
 
     fun onActionAcknowledged() {
-        actionDispatcher.value = null
+        viewState.value = null
     }
 
     override fun onRefresh(user: RedditClientAccountPair?, wasUserInteractionInvolved: Boolean) {
@@ -110,7 +110,4 @@ class InboxFragmentViewModel(private val messageRepository: MessageRepository,
         inboxViewState = state.copy(lastAccount = currentUser.value)
     }
 
-    enum class InboxFragmentAction {
-        NAVIGATE_TO_CONVERSATION
-    }
 }

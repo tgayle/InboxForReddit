@@ -10,7 +10,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.homescreen.BaseHomeScreenFragment
-import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.InboxFragmentViewModel.InboxFragmentAction.NAVIGATE_TO_CONVERSATION
 import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.view.PagedMessageAdapter
 import kotlinx.android.synthetic.main.inbox_fragment.*
 import kotlinx.android.synthetic.main.inbox_fragment.view.*
@@ -76,12 +75,12 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
             activityViewModel.requestToolbarTitleChange(it)
         })
 
-        viewModel.getActionDispatch().observe(viewLifecycleOwner, Observer {
+        viewModel.getState().observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
 
-            when (it.first) {
-                NAVIGATE_TO_CONVERSATION -> {
-                    val navigationArgs = InboxFragmentDirections.ActionInboxFragmentToConversationFragment(it.second!!.parentName)
+            when (it) {
+                is InboxFragmentState.NavigateConversation -> {
+                    val navigationArgs = InboxFragmentDirections.ActionInboxFragmentToConversationFragment(it.message.parentName)
                     findNavController().navigate(navigationArgs)
                 }
             }
