@@ -2,8 +2,6 @@
 
     <!-- Base application theme. -->
     <style name="InboxTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <!--TODO: Move text colors to a custom attr so things like snackbars are the right colors.-->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>

@@ -217,6 +217,10 @@ class MessageRepository @Inject constructor(private val appDatabase: AppDatabase
         ).build()
     }
 
+    fun getConversationMessagesWithoutPaging(conversationParentName: String): LiveData<List<RedditMessage>> {
+        return appDatabase.messages().getConversationMessagesWithoutPaging(conversationParentName)
+    }
+
     /**
      * Returns the oldest message for a conversation.
      * @param conversationParentName The first_message_name to find the oldest message for.

@@ -22,7 +22,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class InboxFragmentViewModel(private val messageRepository: MessageRepository,
-                             userRepository: UserRepository) : ViewModel(), InboxScreenModel {
+                             userRepository: UserRepository) : ViewModel() {
     var inboxViewState: InboxScreenStateArgs = InboxScreenStateArgs()
     private set
 
@@ -34,7 +34,7 @@ class InboxFragmentViewModel(private val messageRepository: MessageRepository,
     private var lastRefresh: Date? = null
     private val timeBetweenAutomaticRefresh = TimeUnit.SECONDS.toMillis(30)
 
-    override fun getInbox(user: LiveData<RedditAccount>): LiveData<List<RedditMessage>> = messageRepository.getInbox(user)
+    fun getInbox(user: LiveData<RedditAccount>): LiveData<List<RedditMessage>> = messageRepository.getInbox(user)
     fun getUserMessages(user: LiveData<RedditClientAccountPair>) = messageRepository.getMessages(user)
     fun getRefreshing(): LiveData<Boolean> = isRefreshing
     fun getState(): LiveData<InboxFragmentState?> = viewState
@@ -47,15 +47,15 @@ class InboxFragmentViewModel(private val messageRepository: MessageRepository,
 
     fun getCurrentFilterTitle() = Transformations.map(currentMessageFilter) { it.name.toLowerCase().capitalize() }
 
-    override fun onMessageClicked(message: RedditMessage) {
-        viewState.value = InboxFragmentState.NavigateConversation(message)
+    fun onMessageClicked(message: RedditMessage, position: Int) {
+        viewState.value = InboxFragmentState.NavigateConversation(message, position)
     }
 
     fun onActionAcknowledged() {
         viewState.value = null
     }
 
-    override fun onRefresh(user: RedditClientAccountPair?, wasUserInteractionInvolved: Boolean) {
+    fun onRefresh(user: RedditClientAccountPair?, wasUserInteractionInvolved: Boolean) {
         if (user == null) return
         val currentTime = Date()
 
@@ -81,7 +81,7 @@ class InboxFragmentViewModel(private val messageRepository: MessageRepository,
         }
     }
 
-    override fun onFilterSelection(item: Int?): Boolean {
+    fun onFilterSelection(item: Int?): Boolean {
         when (item) {
             R.id.menu_filter_inbox -> {
                 currentMessageFilter.value = MessageFilterOption.INBOX
@@ -106,7 +106,7 @@ class InboxFragmentViewModel(private val messageRepository: MessageRepository,
         return !lastItemVisible
     }
 
-    override fun onFragmentStop(state: InboxScreenStateArgs) {
+    fun onFragmentStop(state: InboxScreenStateArgs) {
         inboxViewState = state.copy(lastAccount = currentUser.value)
     }
 

@@ -11,7 +11,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.message_rv_item.*
 
 
-typealias OnMessageClickListener = (message: RedditMessage) -> Unit
+typealias OnMessageClickListener = (message: RedditMessage, position: Int) -> Unit
 
 class MessageViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
     fun bind(redditMessage: RedditMessage?, onMessageClick: OnMessageClickListener?) {
@@ -27,27 +27,33 @@ class MessageViewHolder(override val containerView: View) : RecyclerView.ViewHol
             message_rv_item_subject.text = subject
             message_rv_item_sentreceived.rotation = if (owner == author) 0F else 180F
             message_rv_item_root.setOnClickListener {
-                onMessageClick?.invoke(this)
+                onMessageClick?.invoke(this, adapterPosition)
             }
 
-            val accentColor = itemView.context.getColorFromAttr(android.R.attr.colorAccent)
-            val defaultTextColor = itemView.context.getColorFromAttr(R.attr.primaryTextColor)
+            containerView.transitionName = "root_$fullName"
+            message_rv_item_author.transitionName = "author_$fullName"
+            message_rv_item_date.transitionName = "date_$fullName"
+            message_rv_item_message.transitionName = "body_$fullName"
 
-            if (unread) {
-                val bold = Typeface.DEFAULT_BOLD
-                message_rv_item_author.typeface = bold
-                message_rv_item_subject.typeface = bold
-                message_rv_item_date.typeface = bold
-                message_rv_item_date.setTextColor(accentColor)
-                message_rv_item_sentreceived.setColorFilter(accentColor)
-            } else {
-                val defaultTypeface = Typeface.DEFAULT
-                message_rv_item_author.typeface = defaultTypeface
-                message_rv_item_subject.typeface = defaultTypeface
-                message_rv_item_date.typeface = defaultTypeface
-                message_rv_item_date.setTextColor(defaultTextColor)
-                message_rv_item_sentreceived.colorFilter = null
-            }
+        }
+
+        val accentColor = itemView.context.getColorFromAttr(android.R.attr.colorAccent)
+        val defaultTextColor = itemView.context.getColorFromAttr(R.attr.primaryTextColor)
+
+        if (redditMessage.unread) {
+            val bold = Typeface.DEFAULT_BOLD
+            message_rv_item_author.typeface = bold
+            message_rv_item_subject.typeface = bold
+            message_rv_item_date.typeface = bold
+            message_rv_item_date.setTextColor(accentColor)
+            message_rv_item_sentreceived.setColorFilter(accentColor)
+        } else {
+            val defaultTypeface = Typeface.DEFAULT
+            message_rv_item_author.typeface = defaultTypeface
+            message_rv_item_subject.typeface = defaultTypeface
+            message_rv_item_date.typeface = defaultTypeface
+            message_rv_item_date.setTextColor(defaultTextColor)
+            message_rv_item_sentreceived.colorFilter = null
         }
     }
 

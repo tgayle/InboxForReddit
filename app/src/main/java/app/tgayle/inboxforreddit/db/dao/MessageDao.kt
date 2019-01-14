@@ -28,6 +28,13 @@ abstract class MessageDao {
         const val OLDEST_UNREAD_USER_MESSAGE_NAME = "SELECT fullName FROM messages WHERE owner = :username AND unread = 1 ORDER BY created ASC LIMIT 1"
         const val DELETE_USER_MESSAGES = "DELETE FROM messages WHERE owner = :username"
 
+        const val ALL_MESSAGES_OF_A_CONVERSATION = """
+        SELECT *
+        FROM messages
+        WHERE parentName = :parentName
+        ORDER BY created ASC
+    """
+
         const val ALL_USER_CONVERSATIONS_DESC = """
             SELECT *
             FROM messages
@@ -130,12 +137,7 @@ abstract class MessageDao {
     @Query(DELETE_USER_MESSAGES)
     abstract fun removeMessagesWithOwner(username: String?)
 
-    @Query ("""
-        SELECT *
-        FROM messages
-        WHERE parentName = :parentName
-        ORDER BY created ASC
-    """)
+    @Query (ALL_MESSAGES_OF_A_CONVERSATION)
     abstract fun getConversationMessages(parentName: String?): DataSource.Factory<Int, RedditMessage>
 
     @Query("""
@@ -146,4 +148,7 @@ abstract class MessageDao {
         LIMIT 1
     """)
     abstract fun getFirstMessageOfConversation(parentName: String?): RedditMessage?
+
+    @Query(ALL_MESSAGES_OF_A_CONVERSATION)
+    abstract fun getConversationMessagesWithoutPaging(parentName: String): LiveData<List<RedditMessage>>
 }

@@ -6,10 +6,13 @@ import android.widget.PopupMenu
 import androidx.core.view.doOnNextLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.Fade
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.homescreen.BaseHomeScreenFragment
+import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.view.MessageViewHolder
 import app.tgayle.inboxforreddit.screens.homescreen.inboxscreen.view.PagedMessageAdapter
 import kotlinx.android.synthetic.main.inbox_fragment.*
 import kotlinx.android.synthetic.main.inbox_fragment.view.*
@@ -26,6 +29,8 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
             .of(this, InboxFragmentViewModelFactory(messageRepository, userRepository))
             .get(InboxFragmentViewModel::class.java)
         super.onCreate(savedInstanceState)
+
+        exitTransition = Fade()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -37,8 +42,8 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
         view.inbox_fragment_messageRv.adapter = rvAdapter
         view.inbox_fragment_messageRv.layoutManager = rvLayoutManager
 
-        rvAdapter.onMessageClickListener = {
-            viewModel.onMessageClicked(it)
+        rvAdapter.onMessageClickListener = { message, position ->
+            viewModel.onMessageClicked(message, position)
         }
 
         viewModel.currentUser.observe(viewLifecycleOwner, Observer {
@@ -80,8 +85,17 @@ class InboxFragment : BaseHomeScreenFragment(), InboxScreenModel.Listener, Popup
 
             when (it) {
                 is InboxFragmentState.NavigateConversation -> {
+                    val conversationItemViewHolder = inbox_fragment_messageRv.findViewHolderForAdapterPosition(it.position) as MessageViewHolder?
+                    val extras = if (conversationItemViewHolder != null) {
+                        FragmentNavigatorExtras(
+                            conversationItemViewHolder.containerView to "root_${it.message.fullName}"
+                        )
+                    }else {
+                        FragmentNavigatorExtras()
+                    }
+
                     val navigationArgs = InboxFragmentDirections.ActionInboxFragmentToConversationFragment(it.message.parentName)
-                    findNavController().navigate(navigationArgs)
+                    findNavController().navigate(navigationArgs, extras)
                 }
             }
 

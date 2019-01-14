@@ -3,19 +3,22 @@ package app.tgayle.inboxforreddit.screens.homescreen.conversationscreen
 import android.os.Bundle
 import android.view.*
 import androidx.core.view.doOnPreDraw
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.screens.homescreen.BaseHomeScreenFragment
-import app.tgayle.inboxforreddit.screens.homescreen.conversationscreen.view.ConversationMessagePagedAdapter
+import app.tgayle.inboxforreddit.screens.homescreen.conversationscreen.view.ConversationMessageAdapter
 import app.tgayle.inboxforreddit.util.MaterialSnackbar
+import com.mikepenz.itemanimators.SlideDownAlphaAnimator
+import kotlinx.android.synthetic.main.conversation_fragment.*
 import kotlinx.android.synthetic.main.conversation_fragment.view.*
 
 class ConversationFragment : BaseHomeScreenFragment() {
     private lateinit var viewModel: ConversationViewModel
     private lateinit var vmFactory: ConversationViewModelFactory
-    private val messagesAdapter = ConversationMessagePagedAdapter()
+    private val messagesAdapter = ConversationMessageAdapter()
     private val messagesLayoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,18 +33,25 @@ class ConversationFragment : BaseHomeScreenFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        postponeEnterTransition()
-
         viewModel.conversationInfo.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
             activityViewModel.requestToolbarTitleChange(it.subject)
         })
 
+        viewModel.getState().observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is ConversationFragmentState.ToggleListItemCollapse -> {
+                    val viewHolder = conversation_detail_rv.findViewHolderForAdapterPosition(it.position) as ConversationMessageAdapter.ConversationMessageViewholder
+                    messagesAdapter.updateItem(it.newItemState, it.position)
+                }
+            }
+        })
+
         viewModel.getConversationMessages().observe(viewLifecycleOwner, Observer {
-            messagesAdapter.submitList(it)
+            messagesAdapter.submitItems(it)
             (view.parent as? ViewGroup)?.doOnPreDraw {
                 // Parent has been drawn. Start transitioning!
-                startPostponedEnterTransition()
+//                startPostponedEnterTransition()
             }
         })
     }
@@ -50,6 +60,12 @@ class ConversationFragment : BaseHomeScreenFragment() {
         val view = inflater.inflate(R.layout.conversation_fragment, container, false)
         view.conversation_detail_rv.layoutManager = messagesLayoutManager
         view.conversation_detail_rv.adapter = messagesAdapter
+        messagesAdapter.onHideRevealButtonPressed = {itemWithState, adapterPosition ->  viewModel.onHideRevealButtonPressed(itemWithState, adapterPosition)}
+        view.conversation_detail_rv.itemAnimator = SlideDownAlphaAnimator().apply {
+            addDuration = 250
+            removeDuration = 250
+            withInterpolator(FastOutSlowInInterpolator())
+        }
         return view
     }
 
