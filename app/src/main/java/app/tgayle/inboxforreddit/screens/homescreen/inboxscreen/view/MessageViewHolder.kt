@@ -64,5 +64,10 @@ class MessageViewHolder(override val containerView: View) : RecyclerView.ViewHol
         message_rv_item_subject.text = null
         message_rv_item_sentreceived.rotation = 0F
         message_rv_item_root.setOnClickListener(null)
+
+        containerView.transitionName = null
+        message_rv_item_author.transitionName = null
+        message_rv_item_date.transitionName =  null
+        message_rv_item_message.transitionName =  null
     }
 }

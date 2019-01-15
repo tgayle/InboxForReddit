@@ -41,7 +41,8 @@ class ConversationViewModel(private val conversationParentId: String, private va
     }
 
     fun onHideRevealButtonPressed(item: ConversationRecyclerViewItem, adapterPosition: Int) {
-        // wrapper class with isVisible property?
-        state.value = ConversationFragmentState.ToggleListItemCollapse(adapterPosition, item.copy(isCollapsed = !item.isCollapsed))
+        state.value = ConversationFragmentState.ToggleListItemCollapse(
+            adapterPosition,
+            item.copy(isCollapsed = !item.isCollapsed))
     }
 }

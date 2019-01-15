@@ -13,8 +13,6 @@ import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.db.repository.UserRepository
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivity
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
-import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragmentViewModel.BottomNavigationDrawerAction.DISMISS
-import app.tgayle.inboxforreddit.screens.mainactivity.bottomnavdrawer.BottomNavigationDrawerFragmentViewModel.BottomNavigationDrawerAction.NOTIFY_MAIN_ACTIVITY_FOR_ADD_ACCOUNT
 import app.tgayle.inboxforreddit.util.getColorFromAttr
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.navigation.NavigationView
@@ -54,10 +52,10 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment(), NavigationVie
             if (it == null) return@Observer
 
             when (it) {
-                NOTIFY_MAIN_ACTIVITY_FOR_ADD_ACCOUNT -> {
+                is BottomNavigationDrawerState.NavigateAddAccount -> {
                     activityVm.requestNavigateAddAccount()
                 }
-                DISMISS -> {}
+                is BottomNavigationDrawerState.Dismiss -> {}
             }
             dismiss()
             viewModel.onActionDispatchAcknowledged()

@@ -111,6 +111,13 @@ class UserRepository @Inject constructor(private val appDatabase: AppDatabase,
         if (username == null) return@async
         appDatabase.accounts().removeUserByName(username)
         appDatabase.messages().removeMessagesWithOwner(username)
+
+        val currentSharedPreferencesUser = getSharedPreferencesCurrentUser()
+        if (currentSharedPreferencesUser != null && username == currentSharedPreferencesUser) {
+            sharedPreferences.edit(commit = true) {
+                putString(CURRENT_USER, null)
+            }
+        }
     }
 
     /**

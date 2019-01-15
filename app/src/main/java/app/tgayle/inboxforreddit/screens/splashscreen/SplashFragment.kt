@@ -2,12 +2,12 @@ package app.tgayle.inboxforreddit.screens.splashscreen
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.db.repository.MessageRepository
@@ -43,18 +43,28 @@ class SplashFragment : BaseFragment(), SplashScreenModel.Listener {
     }
 
     override fun listenForNavigation() {
-        viewModel.navigationDecision.observe(viewLifecycleOwner, Observer { navigationId ->
-            if (navigationId != null) {
-                Log.d("Splash Emission", navigationId.toString())
-                GlobalScope.launch(Dispatchers.Main) {
-                    delay(1000)
-                    findNavController().let {
-                        it.popBackStack()
-                        it.navigate(navigationId)
-                    }
+        viewModel.getState().observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is SplashFragmentState.NavigateLogin -> {
+                    val direction = SplashFragmentDirections.actionSplashFragmentToLoginFragment()
+                    navigate(direction)
+                }
+                is SplashFragmentState.NavigateHome -> {
+                    val direction = SplashFragmentDirections.actionSplashFragmentToHomeFragment()
+                    navigate(direction)
                 }
             }
         })
+    }
+
+    private fun navigate(direction: NavDirections) {
+        GlobalScope.launch(Dispatchers.Main) {
+            delay(1000)
+            findNavController().let {
+                it.popBackStack()
+                it.navigate(direction)
+            }
+        }
     }
 
 }

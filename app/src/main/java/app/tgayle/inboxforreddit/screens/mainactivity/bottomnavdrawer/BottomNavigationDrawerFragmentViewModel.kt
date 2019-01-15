@@ -9,16 +9,16 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class BottomNavigationDrawerFragmentViewModel(private val userRepository: UserRepository): ViewModel() {
-    private val actionDispatch = MutableLiveData<BottomNavigationDrawerAction?>()
+    private val actionDispatch = MutableLiveData<BottomNavigationDrawerState?>()
     fun getCurrentUser() = userRepository.getCurrentRedditUser()
 
-    fun getActionDispatch(): LiveData<BottomNavigationDrawerAction?> = actionDispatch
+    fun getActionDispatch(): LiveData<BottomNavigationDrawerState?> = actionDispatch
     fun getUsersList() = userRepository.getUsersAndUnreadMessageCountForEach()
     fun onUserListClick(user: RedditUsernameAndUnreadMessageCount?) {
              GlobalScope.launch {
                  val userInfo = userRepository.getClientFromUser(user!!.username).await()
                  userRepository.updateCurrentUser(userInfo, true)
-                 actionDispatch.postValue(BottomNavigationDrawerAction.DISMISS)
+                 actionDispatch.postValue(BottomNavigationDrawerState.Dismiss)
              }
     }
 
@@ -27,7 +27,7 @@ class BottomNavigationDrawerFragmentViewModel(private val userRepository: UserRe
     }
 
     fun onUserAddClick() {
-        actionDispatch.value = BottomNavigationDrawerAction.NOTIFY_MAIN_ACTIVITY_FOR_ADD_ACCOUNT
+        actionDispatch.value = BottomNavigationDrawerState.NavigateAddAccount
     }
 
     fun onUserRemoveClick(user: RedditUsernameAndUnreadMessageCount?) {
@@ -37,7 +37,7 @@ class BottomNavigationDrawerFragmentViewModel(private val userRepository: UserRe
                 val allUsers = userRepository.getUsersDeferred().await()
                 val accountToSwitchTo = allUsers.firstOrNull { it.name != currentUsername}
                 if (accountToSwitchTo == null) {
-                    TODO("Go back to login screen")
+                    actionDispatch.postValue(BottomNavigationDrawerState.NavigateAddAccount)
                 } else {
                     userRepository.updateCurrentUser(userRepository.getClientFromUser(accountToSwitchTo).await(), true)
                 }
@@ -46,8 +46,4 @@ class BottomNavigationDrawerFragmentViewModel(private val userRepository: UserRe
         }
     }
 
-    enum class BottomNavigationDrawerAction {
-        NOTIFY_MAIN_ACTIVITY_FOR_ADD_ACCOUNT,
-        DISMISS
-    }
 }

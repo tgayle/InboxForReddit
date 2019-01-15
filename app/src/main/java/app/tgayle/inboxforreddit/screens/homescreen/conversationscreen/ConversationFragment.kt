@@ -12,7 +12,6 @@ import app.tgayle.inboxforreddit.screens.homescreen.BaseHomeScreenFragment
 import app.tgayle.inboxforreddit.screens.homescreen.conversationscreen.view.ConversationMessageAdapter
 import app.tgayle.inboxforreddit.util.MaterialSnackbar
 import com.mikepenz.itemanimators.SlideDownAlphaAnimator
-import kotlinx.android.synthetic.main.conversation_fragment.*
 import kotlinx.android.synthetic.main.conversation_fragment.view.*
 
 class ConversationFragment : BaseHomeScreenFragment() {
@@ -41,7 +40,10 @@ class ConversationFragment : BaseHomeScreenFragment() {
         viewModel.getState().observe(viewLifecycleOwner, Observer {
             when (it) {
                 is ConversationFragmentState.ToggleListItemCollapse -> {
-                    val viewHolder = conversation_detail_rv.findViewHolderForAdapterPosition(it.position) as ConversationMessageAdapter.ConversationMessageViewholder
+//                    val itemDistanceFromTopOfScreen = findDistanceFromTopOfWindow(it.position)
+//                    if (itemDistanceFromTopOfScreen != null) {
+//                        conversation_detail_rv.smoothScrollBy(it.position, itemDistanceFromTopOfScreen)
+//                    }
                     messagesAdapter.updateItem(it.newItemState, it.position)
                 }
             }
@@ -62,6 +64,7 @@ class ConversationFragment : BaseHomeScreenFragment() {
         view.conversation_detail_rv.adapter = messagesAdapter
         messagesAdapter.onHideRevealButtonPressed = {itemWithState, adapterPosition ->  viewModel.onHideRevealButtonPressed(itemWithState, adapterPosition)}
         view.conversation_detail_rv.itemAnimator = SlideDownAlphaAnimator().apply {
+            supportsChangeAnimations = false
             addDuration = 250
             removeDuration = 250
             withInterpolator(FastOutSlowInInterpolator())
@@ -75,6 +78,20 @@ class ConversationFragment : BaseHomeScreenFragment() {
             messagesLayoutManager.scrollToPositionWithOffset(messagesAdapter.itemCount - 1, 100)
             viewModel.onFragmentFirstOpenOccurred()
         }
+    }
+
+    /**
+     * Checks if the top of a item is visible on screen and returns the distance from the top of the screen.
+     */
+    private fun findDistanceFromTopOfWindow(position: Int): Int? {
+        val firstCompletelyVisiblePos = messagesLayoutManager.findFirstCompletelyVisibleItemPosition()
+        val commentExtendsBeyondWindowTopEdge = firstCompletelyVisiblePos == -1 || firstCompletelyVisiblePos > position
+        var viewTop: Int? = null
+        if (commentExtendsBeyondWindowTopEdge) {
+            val view = messagesLayoutManager.findViewByPosition(position)
+            viewTop = view?.top
+        }
+        return viewTop
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
