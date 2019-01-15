@@ -23,6 +23,7 @@ import app.tgayle.inboxforreddit.screens.BaseFragment
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivity
 import app.tgayle.inboxforreddit.screens.mainactivity.MainActivityViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.fragment_login.view.*
 import net.dean.jraw.oauth.AccountHelper
 import javax.inject.Inject
 
@@ -52,6 +53,11 @@ class LoginScreenFragment : BaseFragment(), LoginScreenModel.Listener {
         clearWebViewHistory(webView)
         goToLoginTab(webView)
         listenForNavigation()
+
+        view.loginFragmentSwipeRefreshLayout.setOnRefreshListener {
+            goToLoginTab(loginWebview)
+        }
+
         return view
     }
 
@@ -68,13 +74,13 @@ class LoginScreenFragment : BaseFragment(), LoginScreenModel.Listener {
 
     private fun showLoadingText() {
         loadingAnimationInProgress = true
-
-        loginWebview.animate()
+        val targetAnimationView = loginFragmentSwipeRefreshLayout
+        targetAnimationView.animate()
             .setDuration(500)
             .setInterpolator(FastOutSlowInInterpolator())
             .alpha(0f)
             .withEndAction {
-                loginWebview.visibility = View.GONE
+                targetAnimationView.visibility = View.GONE
                 loginFragmentLoadingLayout.visibility = View.VISIBLE
                 loginFragmentLoadingLayout.animate()
                     .setDuration(450)
@@ -102,9 +108,14 @@ class LoginScreenFragment : BaseFragment(), LoginScreenModel.Listener {
     private fun setLoginWebviewListener(webView: WebView) {
         webView.webViewClient = object: WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                loginFragmentSwipeRefreshLayout?.isRefreshing = true
                 if (viewModel.isValidAuthorizationLink(url)) {
                     view?.stopLoading()
+                    this.onPageFinished(view, url)
                 }
+            }
+            override fun onPageFinished(view: WebView?, url: String?) {
+                loginFragmentSwipeRefreshLayout?.isRefreshing = false
             }
         }
     }

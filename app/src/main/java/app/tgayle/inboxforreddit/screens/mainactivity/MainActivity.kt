@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity(), MainActivityModel.Listener,
             when (it) {
                 is MainActivityState.NavigateLogin -> {
                     val args = LoginScreenFragmentArgs.Builder().setPopBackStackAfterLogin(true).build().toBundle()
-                    navController.navigate(R.id.loginFragment, args)
+                    navController.navigate(R.id.action_global_loginFragment, args)
                 }
                 is MainActivityState.RecreateActivity -> recreate()
                 is MainActivityState.EmptyState -> return@Observer

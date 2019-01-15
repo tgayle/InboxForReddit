@@ -57,12 +57,12 @@ class SplashFragment : BaseFragment(), SplashScreenModel.Listener {
         })
     }
 
-    private fun navigate(direction: NavDirections) {
+    private fun navigate(directions: NavDirections) {
         GlobalScope.launch(Dispatchers.Main) {
             delay(1000)
             findNavController().let {
                 it.popBackStack()
-                it.navigate(direction)
+                it.navigate(directions)
             }
         }
     }
