@@ -38,13 +38,7 @@ class ConversationFragment : BaseHomeScreenFragment() {
 
         viewModel.getState().observe(viewLifecycleOwner, Observer {
             when (it) {
-                is ConversationFragmentState.ToggleListItemCollapse -> {
-//                    val itemDistanceFromTopOfScreen = findDistanceFromTopOfWindow(it.position)
-//                    if (itemDistanceFromTopOfScreen != null) {
-//                        conversation_detail_rv.smoothScrollBy(it.position, itemDistanceFromTopOfScreen)
-//                    }
-//                    messagesAdapter.updateItem(it.newItemState, it.position)
-                }
+
             }
         })
 
@@ -57,7 +51,6 @@ class ConversationFragment : BaseHomeScreenFragment() {
         val view = inflater.inflate(R.layout.conversation_fragment, container, false)
         view.conversation_detail_rv.layoutManager = messagesLayoutManager
         view.conversation_detail_rv.adapter = messagesAdapter
-        messagesAdapter.onHideRevealButtonPressed = {itemWithState, adapterPosition ->  viewModel.onHideRevealButtonPressed(itemWithState, adapterPosition)}
         view.conversation_detail_rv.itemAnimator = SlideDownAlphaAnimator().apply {
             supportsChangeAnimations = false
             addDuration = 250
