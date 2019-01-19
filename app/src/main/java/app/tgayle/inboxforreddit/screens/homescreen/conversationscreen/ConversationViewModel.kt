@@ -32,8 +32,7 @@ class ConversationViewModel(private val conversationParentId: String, private va
     fun getState(): LiveData<ConversationFragmentState> = state
     fun getConversationMessages() = Transformations.map(
         messageRepository.getConversationMessagesWithoutPaging(conversationParentId)) {
-            it.map { ConversationRecyclerViewItem(it)
-        }
+            it.map { ConversationRecyclerViewItem(it) }
     }
 
     fun onFragmentFirstOpenOccurred() {

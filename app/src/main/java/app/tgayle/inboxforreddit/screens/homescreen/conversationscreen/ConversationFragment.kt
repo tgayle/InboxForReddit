@@ -2,7 +2,6 @@ package app.tgayle.inboxforreddit.screens.homescreen.conversationscreen
 
 import android.os.Bundle
 import android.view.*
-import androidx.core.view.doOnPreDraw
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -44,17 +43,13 @@ class ConversationFragment : BaseHomeScreenFragment() {
 //                    if (itemDistanceFromTopOfScreen != null) {
 //                        conversation_detail_rv.smoothScrollBy(it.position, itemDistanceFromTopOfScreen)
 //                    }
-                    messagesAdapter.updateItem(it.newItemState, it.position)
+//                    messagesAdapter.updateItem(it.newItemState, it.position)
                 }
             }
         })
 
         viewModel.getConversationMessages().observe(viewLifecycleOwner, Observer {
-            messagesAdapter.submitItems(it)
-            (view.parent as? ViewGroup)?.doOnPreDraw {
-                // Parent has been drawn. Start transitioning!
-//                startPostponedEnterTransition()
-            }
+            messagesAdapter.submitList(it)
         })
     }
 
