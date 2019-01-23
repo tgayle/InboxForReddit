@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import app.tgayle.inboxforreddit.R
 import app.tgayle.inboxforreddit.model.RedditMessage
+import app.tgayle.inboxforreddit.util.getTimeAgo
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.conversation_message_rv_item.*
-import java.text.SimpleDateFormat
 
 
 class ConversationMessageAdapter: ListAdapter<RedditMessage, ConversationMessageAdapter.ConversationMessageViewholder>(RedditMessage.DEFAULT_DIFF_UTIL) {
@@ -33,7 +33,7 @@ class ConversationMessageAdapter: ListAdapter<RedditMessage, ConversationMessage
             }
             conversation_message_item_correspondent.text = message.author
             conversation_message_item_body.text = message.body
-            conversation_message_item_date.text = SimpleDateFormat.getDateInstance().format(message.created)
+            conversation_message_item_date.text = getTimeAgo(message.created.time)
 
             containerView.transitionName = "root_${message.fullName}"
             conversation_message_item_correspondent.transitionName = "author_${message.fullName}"
@@ -45,8 +45,8 @@ class ConversationMessageAdapter: ListAdapter<RedditMessage, ConversationMessage
                 notifyItemChanged(adapterPosition)
             }
 
-            conversation_message_item_body.maxLines = if (isCollapsed == true) 1 else Int.MAX_VALUE
-            conversation_message_item_body.alpha = if (isCollapsed == true) 0.63f else 1f
+            conversation_message_item_body.maxLines = if (isCollapsed) 1 else Int.MAX_VALUE
+            conversation_message_item_body.alpha = if (isCollapsed) 0.63f else 1f
         }
 
         private fun clear() {

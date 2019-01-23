@@ -11,7 +11,6 @@ import java.util.*
 
 /**
  * A data class model representing a RedditMessage
- * @property uuid A unique identifer since there's a chance of having multiple messages with the same id.
  * @property owner The username of the user who this previewMessage belongs to.
  * @property author The username of the user who sent this previewMessage.
  * @property destination The username of the user who received this previewMessage.
@@ -23,7 +22,6 @@ import java.util.*
  */
 @Entity(tableName = "messages")
 data class RedditMessage(
-    val uuid: UUID,
     @ForeignKey(entity = RedditAccount::class, parentColumns = ["name"], childColumns = ["owner"])
     val owner: String,
     val author: String,
@@ -37,17 +35,13 @@ data class RedditMessage(
     val body: String,
     val distinguished: DistinguishedState) {
 
-    constructor(uuid: UUID,
-                owner: String,
-                author: String,
-                destination: String,
-                unread: Boolean,
-                fullName: String,
-                parentName: String,
-                created: Date,
-                subject: String,
-                body: String,
-                jrawDistinguished: DistinguishedStatus): this(uuid, owner, author, destination, unread, fullName, parentName, created, subject, body, DistinguishedState.resolveFrom(jrawDistinguished))
+    constructor(owner: String, author: String, destination: String,
+                unread: Boolean, fullName: String, parentName: String,
+                created: Date, subject: String, body: String,
+                jrawDistinguished: DistinguishedStatus): this(
+                    owner, author, destination,
+                    unread, fullName, parentName,
+                    created, subject, body, DistinguishedState.resolveFrom(jrawDistinguished))
 
     @Ignore
     val correspondent: String = if (owner == author) destination else author

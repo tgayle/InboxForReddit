@@ -64,7 +64,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
     <View
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="1dp"
             app:layout_constraintTop_toBottomOf="@id/conversation_message_item_info_root"
             app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/conversation_message_item_divider"

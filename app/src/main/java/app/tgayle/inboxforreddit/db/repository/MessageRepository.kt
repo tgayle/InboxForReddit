@@ -17,7 +17,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import net.dean.jraw.RedditClient
 import net.dean.jraw.models.Message
-import java.util.*
 import javax.inject.Inject
 
 @InboxApplicationScope
@@ -157,7 +156,7 @@ class MessageRepository @Inject constructor(private val appDatabase: AppDatabase
     private fun convertNetMessageToLocalMessage(account: RedditAccount, messages: List<Message>) = messages.map { message ->
         val parentId = message.firstMessage?: message.fullName
 
-        return@map RedditMessage(UUID.randomUUID(), account.name, message.author!!, message.dest,
+        return@map RedditMessage(account.name, message.author!!, message.dest,
             message.isUnread, message.fullName, parentId, message.created, message.subject, message.body, message.distinguished)
     }
 
